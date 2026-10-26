@@ -1,0 +1,6 @@
+Connecting to local database...
+psql:/Projects/OURVERSE/supabase/tests/001_rls_and_capsules.sql:18: NOTICE:  extension "pgtap" already exists, skipping
+/Projects/OURVERSE/supabase/tests/001_rls_and_capsules.sql .. ok
+All tests successful.
+Files=1, Tests=87,  0 wallclock secs ( 0.02 usr  0.00 sys +  0.01 cusr  0.01 csys =  0.04 CPU)
+Result: PASS

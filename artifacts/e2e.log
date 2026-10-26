@@ -1,0 +1,40 @@
+
+> ourverse@0.1.0 test:e2e
+> playwright test
+
+
+Running 30 tests using 1 worker
+
+  ✓   1 [desktop] › e2e\a11y.spec.ts:6:3 › accessibility › core pages have no WCAG 2.1 A/AA violations (25.2s)
+  ✓   2 [desktop] › e2e\a11y.spec.ts:18:3 › accessibility › login page and dialogs are accessible too (2.8s)
+  ✓   3 [desktop] › e2e\anniversary.spec.ts:5:3 › anniversaries › the home page shows a real, user-defined countdown and it can be edited away (4.5s)
+  ✓   4 [desktop] › e2e\ask.spec.ts:10:3 › memory assistant › answers from records with a clickable citation (1.8s)
+  ✓   5 [desktop] › e2e\ask.spec.ts:27:3 › memory assistant › refuses to invent an answer when no record supports it (1.4s)
+  ✓   6 [desktop] › e2e\ask.spec.ts:36:3 › memory assistant › counts only the records the viewer may access (1.4s)
+  ✓   7 [desktop] › e2e\ask.spec.ts:43:3 › memory assistant › AI stays disabled by default and explains exactly what enabling sends (1.8s)
+  ✓   8 [desktop] › e2e\ask.spec.ts:60:3 › memory assistant › filters a date question to that month and brings sources (1.4s)
+  ✓   9 [desktop] › e2e\auth.spec.ts:5:3 › authentication and entry › login screen is neutral, private and labelled as demo (1.0s)
+  ✓  10 [desktop] › e2e\auth.spec.ts:16:3 › authentication and entry › fictional identity A enters the seeded space (1.3s)
+  ✓  11 [desktop] › e2e\auth.spec.ts:27:3 › authentication and entry › third demo account without a space is sent to onboarding and sees no records (1.3s)
+  ✓  12 [desktop] › e2e\auth.spec.ts:37:3 › authentication and entry › unknown routes show a 404 page (507ms)
+  ✓  13 [desktop] › e2e\auth.spec.ts:42:3 › authentication and entry › signing out clears the demo session (1.9s)
+  ✓  14 [desktop] › e2e\capsule.spec.ts:5:3 › time capsules › sealed capsules refuse early access, even if the device clock jumps forward (1.7s)
+  ✓  15 [desktop] › e2e\capsule.spec.ts:29:3 › time capsules › an already-open capsule reveals its sealed body only when opened (1.8s)
+  ✓  16 [desktop] › e2e\capsule.spec.ts:41:3 › time capsules › creates a future capsule with a real persisted schedule (1.9s)
+  ✓  17 [desktop] › e2e\export.spec.ts:23:3 › offline digital museum › exports, verifies and opens with no network at all (5.1s)
+  ✓  18 [desktop] › e2e\isolation.spec.ts:5:3 › two-person isolation across the UI › B never sees A’s private record through list, detail, gallery, ask or capsules (7.5s)
+  ✓  19 [desktop] › e2e\isolation.spec.ts:48:3 › two-person isolation across the UI › a third demo account without membership cannot read or search any record (2.6s)
+  ✓  20 [desktop] › e2e\isolation.spec.ts:65:3 › two-person isolation across the UI › both people can independently add shared records and see each other immediately (5.2s)
+  ✓  21 [desktop] › e2e\memory.spec.ts:5:3 › memory lifecycle › creates a memory with media and surfaces it in detail, timeline, stars and gallery (6.7s)
+  ✓  22 [desktop] › e2e\memory.spec.ts:60:3 › memory lifecycle › edits and deletes a memory, keeping timeline and stars consistent (5.8s)
+  ✓  23 [desktop] › e2e\memory.spec.ts:94:3 › memory lifecycle › validates an empty title instead of saving invalid data (1.4s)
+  ✓  24 [desktop] › e2e\memory.spec.ts:102:3 › memory lifecycle › quick note on the home screen persists a real memory (2.1s)
+  ✓  25 [desktop] › e2e\memory.spec.ts:112:3 › memory lifecycle › rejects an unsupported file type in the upload picker (1.4s)
+  ✓  26 [desktop] › e2e\memory.spec.ts:125:3 › memory lifecycle › desktop layout has no horizontal overflow on each core page (6.6s)
+  ✓  27 [desktop] › e2e\responsive.spec.ts:5:3 › visual consistency and reduced motion › desktop screens have no horizontal overflow and are captured as evidence (22.5s)
+  ✓  28 [desktop] › e2e\responsive.spec.ts:27:3 › visual consistency and reduced motion › prefers-reduced-motion stops the continuous star animation (2.7s)
+  -  29 [desktop] › e2e\supabase-local.spec.ts:28:3 › real Supabase backend acceptance › A creates a space, B accepts a one-time invite, both see shared but not private
+  ✓  30 [mobile] › e2e\mobile.spec.ts:5:3 › mobile experience › bottom navigation, touch flows and responsive layout (7.7s)
+
+  1 skipped
+  29 passed (2.2m)

@@ -1,0 +1,64 @@
+OURVERSE 离线博物馆校验
+输入：artifacts/exports/e2e-extracted
+类型：目录
+清单：SHA256SUMS.txt，共 23 个文件
+
+[OK]      README.txt
+[OK]      assets/0001-sea-sunset.jpg
+[OK]      assets/0002-rain-street.webp
+[OK]      assets/0003-mountain-stars.png
+[OK]      assets/0004-night-train.jpg
+[OK]      assets/0005-room-tone.mp3
+[OK]      assets/0006-balcony-moon.webm
+[OK]      index.html
+[OK]      manifest.json
+[OK]      memories.json
+[OK]      memories/2025-10-19-我们认识的第一天.md
+[OK]      memories/2026-01-24-写给自己的话.md
+[OK]      memories/2026-03-08-搬家那天.md
+[OK]      memories/2026-04-01-三月的那场雨.md
+[OK]      memories/2026-05-03-厨房里的第一次手忙脚乱.md
+[OK]      memories/2026-05-28-阳台上的月亮.md
+[OK]      memories/2026-06-08-第一次一起看电影.md
+[OK]      memories/2026-06-28-一起录下的房间声音.md
+[OK]      memories/2026-07-25-第一次坐夜车.md
+[OK]      memories/2026-08-29-凌晨四点的山顶.md
+[OK]      memories/2026-09-22-雨夜里的那家面馆.md
+[OK]      memories/2026-10-14-海边的第一场日落.md
+[OK]      meta.json
+
+结果：23 个文件通过，0 个缺失，0 个哈希不匹配，0 个额外文件。
+严格模式：未发现远程引用或模块脚本。
+校验通过：哈希全部一致。
+OURVERSE 离线博物馆校验
+输入：artifacts/exports/e2e-museum.zip
+类型：ZIP
+清单：SHA256SUMS.txt，共 23 个文件
+
+[OK]      README.txt
+[OK]      assets/0001-sea-sunset.jpg
+[OK]      assets/0002-rain-street.webp
+[OK]      assets/0003-mountain-stars.png
+[OK]      assets/0004-night-train.jpg
+[OK]      assets/0005-room-tone.mp3
+[OK]      assets/0006-balcony-moon.webm
+[OK]      index.html
+[OK]      manifest.json
+[OK]      memories.json
+[OK]      memories/2025-10-19-我们认识的第一天.md
+[OK]      memories/2026-01-24-写给自己的话.md
+[OK]      memories/2026-03-08-搬家那天.md
+[OK]      memories/2026-04-01-三月的那场雨.md
+[OK]      memories/2026-05-03-厨房里的第一次手忙脚乱.md
+[OK]      memories/2026-05-28-阳台上的月亮.md
+[OK]      memories/2026-06-08-第一次一起看电影.md
+[OK]      memories/2026-06-28-一起录下的房间声音.md
+[OK]      memories/2026-07-25-第一次坐夜车.md
+[OK]      memories/2026-08-29-凌晨四点的山顶.md
+[OK]      memories/2026-09-22-雨夜里的那家面馆.md
+[OK]      memories/2026-10-14-海边的第一场日落.md
+[OK]      meta.json
+
+结果：23 个文件通过，0 个缺失，0 个哈希不匹配，0 个额外文件。
+严格模式：未发现远程引用或模块脚本。
+校验通过：哈希全部一致。

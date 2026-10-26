@@ -1,0 +1,6 @@
+
+Running 1 test using 1 worker
+
+  ✓  1 [desktop] › e2e\supabase-local.spec.ts:28:3 › real Supabase backend acceptance › A creates a space, B accepts a one-time invite, both see shared but not private (9.6s)
+
+  1 passed (13.6s)
