@@ -73,4 +73,11 @@ export const router = createBrowserRouter([
     ],
   },
   { path: '*', element: <NotFoundPage /> },
-]);
+], { basename: basename() });
+
+// Vite injects the configured base (e.g. `/ourverse/` on GitHub Pages).
+// React Router expects `/ourverse`; at the domain root we omit it entirely.
+function basename(): string | undefined {
+  const base = import.meta.env.BASE_URL;
+  return base === '/' ? undefined : base.replace(/\/+$/, '');
+}
