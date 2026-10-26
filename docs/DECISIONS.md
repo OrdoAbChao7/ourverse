@@ -109,3 +109,17 @@
 **理由**：本地栈能验证真实的 RLS、触发器、存储策略与函数运行时，同时不创建云资源、不发送真实邮件、不产生费用。
 
 **影响**：本地 Kong 的 CORS 行为与云端可能不同，已在证据文档中单独标注，不能当作生产 CORS 证据。
+
+## ADR-013 GitHub Pages 只托管 demo 静态站
+
+**背景**：用户授权在 GitHub 创建仓库并发布到 GitHub Pages。页面构建产物必须与本地开发、真实 Supabase 模式及子路径托管同时兼容。
+
+**决策**：
+- 用 GitHub Actions（`.github/workflows/deploy-pages.yml`）在 `master` 推送时构建并部署；
+- 构建时传 `VITE_BASE_PATH=/ourverse/`；`vite.config.ts` 读取该值，React Router 用 `import.meta.env.BASE_URL` 作为 basename；
+- 构建后复制 `index.html` 为 `404.html`，让 GitHub Pages 的深链接回退到应用外壳；写 `.nojekyll`；
+- 构建不注入任何 Supabase 或模型凭据，部署产物固定为 demo 模式。
+
+**理由**：GitHub Pages 只提供静态文件，没有服务端 rewrite 与运行时密钥；把 demo 发布出去让用户能直接查看成品，同时不虚构真实后端已上线。
+
+**影响**：深链接会先收到 HTTP 404 再渲染应用（静态托管的已知限制）；真实 Supabase、邮件与 AI 仍需另行配置，且不应把此 demo 当作生产部署。

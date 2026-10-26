@@ -3,8 +3,9 @@
 一个只属于两个人的私人数字记忆世界：星空首页、时间线、数字博物馆、时间胶囊、双人隔离、可选 AI 记忆助手，以及断网也能打开的离线博物馆导出。
 
 - **默认演示模式**：不需要账号、不需要网络、不需要任何密钥。数据写入本机 IndexedDB，界面明确标注 `DEMO`。
+- **在线演示**：<https://ordoabchao7.github.io/ourverse/>（GitHub Pages，纯前端 demo 模式，数据只留在访问者本机）。
 - **真实后端已实现**：Supabase Auth / Postgres / RLS / Storage / Edge Function，代码与迁移均在仓库中，并已用本地 Docker Supabase 真实验证。
-- **未部署**：本仓库没有创建任何云项目、没有上传任何私人内容、没有推送远程仓库。
+- **云端未部署**：没有创建云 Supabase 项目、没有配置真实邮件、没有上传任何私人内容；线上演示只有虚构数据。
 
 > 视觉基线：Midnight Observatory（`#08111F` / `#101B35` / `#B9A1E8` / `#F0D49C` / `#82C5CF`），支持 375px 与 1440px、键盘操作与 `prefers-reduced-motion`。
 
@@ -50,6 +51,22 @@ npm run dev
 ```powershell
 npm run build
 npm run preview   # http://localhost:4173
+```
+
+### 2.1 GitHub Pages 在线演示
+
+<https://ordoabchao7.github.io/ourverse/>
+
+- 由 `.github/workflows/deploy-pages.yml` 在每次推送到 `master` 时构建并部署。
+- 构建时设置 `VITE_BASE_PATH=/ourverse/`，路由自动使用该 base；`dist/404.html` 兜底深链接。
+- 部署产物**不包含任何 Supabase 凭据**，因此只能进入 demo 模式；真实后端仍需本地或授权云端环境。
+- GitHub Pages 对不存在的深链接会返回 HTTP 404 后再渲染应用外壳，这是静态托管的预期行为，页面功能不受影响。
+
+本地验证子路径构建：
+
+```powershell
+$env:VITE_BASE_PATH='/ourverse/'; npm run build; npm run preview
+# 打开 http://localhost:4173/ourverse/
 ```
 
 ---

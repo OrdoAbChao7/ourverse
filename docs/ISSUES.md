@@ -163,6 +163,14 @@
 - **修复**：限定 section / role、使用 `.first()`；月份从「12 天前的种子记录」动态计算，保证任意日期运行都成立。
 - **回归**：完整 E2E 29 passed。
 
+### ISSUE-22 登录卡片在 375/390px 被裁切
+
+- **现象**：GitHub Pages 线上检查的移动端截图显示，登录卡片右边缘与部分说明文字被屏幕裁掉；但 `document.documentElement.scrollWidth === innerWidth`，既有的「无横向溢出」断言未发现。
+- **根因**：`LoginPage` 的 `main` 是 `grid`，移动端没有显式列定义，自动列按内容宽度（`max-content`）撑开至约 403px；根元素 `overflow-hidden` 把溢出裁掉，因此 `scrollWidth` 仍然等于视口宽度，只检查滚动宽度的断言无法捕获。
+- **修复**：显式 `grid-cols-1`，列宽变为 `minmax(0, 1fr)`；在 `e2e/mobile.spec.ts` 增加登录面板左右边界必须落在视口内的断言。
+- **验证**：375/390px 下 `clipped` 元素为空；移动端修复后 E2E 通过；线上重新部署后复测。
+- **状态**：已修复。
+
 ## 6. 仍然存在的限制（未修复，已记录）
 
 | 编号 | 限制 | 影响 | 处理 |
@@ -174,7 +182,7 @@
 | LIM-05 | 没有离线包一键导入 | 离线包是长期可读副本，不是数据库快照 | 可按 `memories.json` / Markdown 迁移 |
 | LIM-06 | `package.json` 中有未使用的 `date-fns` | 增加安装体积，与 ADR-004「不引入日期库」不一致 | 源码未导入；未擅自移除外部改动，建议后续确认后删除 |
 | LIM-07 | 本机 Docker Desktop 偶发退出 | Supabase 验收需重试 | 重跑前先确认 `docker info` |
-| LIM-08 | 云 Supabase、邮件、部署、模型密钥均未配置 | 真实生产链路未打通 | BLOCKED_EXTERNAL，见验收报告 |
+| LIM-08 | 云 Supabase、邮件、真实模型密钥与 Cloudflare 部署均未配置 | 真实生产链路未打通；GitHub Pages 仅承载 demo 静态站 | BLOCKED_EXTERNAL / NOT_DEPLOYED_BY_DESIGN，见验收报告 |
 
 ## 7. 外部阻塞（非代码缺陷）
 
@@ -182,7 +190,8 @@
 | --- | --- | --- |
 | 云端 Supabase 项目 | BLOCKED_EXTERNAL | 用户账号、项目创建授权、费用确认 |
 | 真实邮件发送 | BLOCKED_EXTERNAL | 邮件服务 / 域名 / SMTP 配置 |
-| Cloudflare Pages 部署 | NOT_DEPLOYED_BY_DESIGN | 明确部署授权；当前无远程仓库 |
+| GitHub Pages demo | DEPLOYED（仅虚构数据） | <https://ordoabchao7.github.io/ourverse/>；真实后端未随站点部署 |
+| Cloudflare Pages 部署 | NOT_DEPLOYED_BY_DESIGN | 明确部署授权；当前仅有 GitHub Pages demo |
 | 真实模型调用 | BLOCKED_NO_PROVIDER_KEY | 服务端提供商密钥；不得进入前端 |
 | 托管 CORS 验收 | NOT_RUN_BY_DESIGN | 已部署的真实 Origin |
 | 云备份 / PITR / 恢复演练 | OPERATOR_ACTION | 云项目与运维窗口 |

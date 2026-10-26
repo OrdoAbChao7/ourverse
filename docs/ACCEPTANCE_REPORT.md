@@ -2,7 +2,7 @@
 
 日期：2026-10-26
 工作目录：`E:\Projects\OURVERSE`
-结论：**本地版本完成，线上能力待账号 / 授权**。没有部署、没有创建云资源、没有上传私人内容、没有调用收费模型。
+结论：**本地版本完成，线上能力待账号 / 授权**。没有创建云资源、没有上传私人内容、没有调用收费模型；唯一的公网产物是只含虚构数据的 GitHub Pages 静态 demo（见 §14）。
 
 本报告只列出实际执行过的命令与结果。截图与关键日志随仓库保留在 `artifacts/`；离线 ZIP、本地 dump 与 Playwright HTML 报告保留在工作区（部分由 `.gitignore` 排除），均可用本报告的命令复现。
 
@@ -149,8 +149,8 @@
 | 隐私说明 | **PASS** | `docs/privacy.md` |
 | 备份与恢复说明 | **PASS** | `docs/backup-and-restore.md`（本地 dump 命令已实测 exit 0） |
 | 无硬编码密钥 / 私人资料 | **PASS** | 见 §9 扫描 |
-| 公开部署 | **NOT_DEPLOYED_BY_DESIGN** | 未授权；无远程仓库；`dist/` 可部署 |
-| 公网链接 | **N/A_BY_DESIGN** | 不以没有公网链接判失败 |
+| 公开部署 | **PASS（GitHub Pages demo）** | <https://ordoabchao7.github.io/ourverse/>；详见 §14；真实后端未随站点部署 |
+| 公网链接 | **PASS** | 线上 demo 可访问；真实云端链接仍 BLOCKED_EXTERNAL |
 
 **S5：PASS（本地交付）；部署 NOT_DEPLOYED_BY_DESIGN**
 
@@ -272,3 +272,22 @@ npx supabase test db
 **本地 GOAL 已完成**：产品可运行、数据真实持久化、双人隔离在本地与真实 Postgres 双侧验证、离线包真实断网可打开、AI 有引用且在无证据时拒绝、全部本地门禁通过。
 
 **线上能力未完成且未伪装完成**：云 Supabase、邮件、部署、模型密钥与托管 CORS 均等待用户授权或运维配置。当前状态应描述为「本地版本已完成，线上能力待账号 / 授权」，而不是「已上线」。
+
+---
+
+## 14. 线上演示（GitHub Pages，2026-10-26 追加）
+
+| 项 | 结果 |
+| --- | --- |
+| 仓库 | <https://github.com/OrdoAbChao7/ourverse>（public） |
+| 页面 | <https://ordoabchao7.github.io/ourverse/> |
+| 部署方式 | `.github/workflows/deploy-pages.yml`：`npm ci` → typecheck / lint / test → `VITE_BASE_PATH=/ourverse/` build → 复制 `404.html` → `deploy-pages` |
+| 工作流运行 | run `40268307156`（commit `4d7970f`），build 与 deploy 均成功 |
+| 站点内容 | 纯静态 demo；**不包含 Supabase URL / anon key / 模型密钥**，数据只写入访问者本机 IndexedDB |
+| 线上检查 | `/ourverse/` 200；favicon 与入口 JS 200；demo 身份「林雾」可登录；首页标题「把故事留在星光里。」；`/ourverse/app/timeline` 深链接渲染「所有被留下的时刻」；375px 无横向溢出 |
+| 已知行为 | GitHub Pages 对 `/ourverse/login`、`/ourverse/app/timeline` 等深链接返回 **HTTP 404 + 应用外壳**（`404.html`），页面照常启动；这是静态托管的预期限制 |
+| 修复 | 线上移动端检查发现登录卡片在 375/390px 被根元素 `overflow-hidden` 裁切（`scrollWidth` 检查未捕获）；根因是 `main` 的网格列使用 `auto` 宽度。已改为 `grid-cols-1` 并新增 Playwright 边界断言（`e2e/mobile.spec.ts`），本机 E2E 29 passed / 1 skipped |
+
+截图：`artifacts/pages-live-login-1440.png`、`artifacts/pages-live-home-1440.png`、`artifacts/pages-live-timeline-1440.png`、`artifacts/pages-live-login-mobile.png`（修复后重新采集）。
+
+**边界**：此次部署只是「demo 静态站」，不是「真实后端已上线」。真实 Supabase、邮件、AI 模型与 Cloudflare Pages 部署仍未进行。

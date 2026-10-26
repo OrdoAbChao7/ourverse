@@ -7,8 +7,9 @@
 
 - 日期：2026-10-26
 - 本地阶段：**S0–S5 完成，本地验收通过**
-- 线上状态：**NOT_DEPLOYED_BY_DESIGN**（未授权，不部署、不推送）
-- 分支：`master`（仅本地 commit；未配置远程）
+- 线上演示：**已部署 GitHub Pages（demo 模式）** → <https://ordoabchao7.github.io/ourverse/>
+- 真实云端：**BLOCKED_EXTERNAL**（未创建云 Supabase 项目、未配置邮件、未部署 Cloudflare Pages）
+- 分支：`master`（本地 + GitHub `OrdoAbChao7/ourverse`）
 - 云端 Supabase / 邮件 / 模型密钥：**BLOCKED_EXTERNAL / BLOCKED_NO_PROVIDER_KEY**
 
 一句话结论：**本地版本已完成，线上能力待账号 / 授权。** 详见 `docs/ACCEPTANCE_REPORT.md`。
@@ -36,7 +37,7 @@
 | S2 星空 / 时间线 / 纪念日 / 胶囊 | **PASS** | 每颗星映射真实记忆；修改/删除后一致；胶囊时钟；reduced-motion；≥5 条 E2E |
 | S3 离线数字博物馆 | **PASS** | 12 条 / 6 媒体；断网 `file://`；23 文件哈希；篡改检测；媒体真实解码 |
 | S4 记忆检索助手 | **PASS（检索与安全边界）** | 20 题套件（8 可答 / 6 无证据 / 6 隔离）；引用校验；模型默认关闭；真实模型 BLOCKED |
-| S5 发布候选与交付 | **PASS（本地）** | `verify` + 29 E2E；截图；README / 隐私 / 备份 / 验收报告；无密钥；未部署 |
+| S5 发布候选与交付 | **PASS（本地）** | `verify` + 29 E2E；截图；README / 隐私 / 备份 / 验收报告；无密钥；GitHub Pages demo 已部署 |
 
 ## 最终命令记录（2026-10-26）
 
@@ -50,6 +51,9 @@
 | 11:52 | `npm run test:e2e` | 0；**29 passed / 1 conditional skip** |
 | 11:52 | `node scripts/verify-export.mjs … --strict`（目录 + ZIP） | 0；**23 文件通过**；无远程引用 |
 | 11:56 | `npx supabase db dump --db-url …`（schema / data-only） | 0；备份命令可用（未执行恢复） |
+| 12:17 | `gh repo create ourverse --public … --push` | 0；远程 `OrdoAbChao7/ourverse`，分支 `master` |
+| 12:18 | GitHub Actions `Deploy to GitHub Pages`（run 40268307156） | 0；build + deploy 均成功 |
+| 12:20 | 线上检查（curl + Playwright） | `/ourverse/` 200；demo 登录、首页、`/app/timeline` 深链接可用；移动端 375px 回归通过 |
 | 更早 | Lighthouse（登录页 preview） | Performance **94** / Accessibility **100**；仅这两个 category |
 
 日志：`artifacts/verify.log`、`e2e.log`、`db-reset.log`、`pgtap.log`、`supabase-integration.log`、`supabase-ui-e2e.log`、`export-verify.log`。截图在 `artifacts/screenshots/`。
