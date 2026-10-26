@@ -132,7 +132,7 @@ export function LoginPage() {
       <StarField intensity={1.25} />
       <div className="pointer-events-none absolute inset-0 z-0 hero-glow opacity-80" aria-hidden="true" />
 
-      <main id="main" className="relative z-10 mx-auto grid min-h-dvh w-full max-w-[1380px] lg:grid-cols-[1.02fr_0.98fr]">
+      <main id="main" className="relative z-10 mx-auto grid min-h-dvh w-full max-w-[1380px] grid-cols-1 lg:grid-cols-[1.02fr_0.98fr]">
         <section className="relative hidden flex-col justify-between px-12 py-12 lg:flex xl:px-20 xl:py-16">
           <Wordmark />
 

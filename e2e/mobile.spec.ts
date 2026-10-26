@@ -6,6 +6,15 @@ test.describe('mobile experience', () => {
     test.setTimeout(90_000);
     await page.goto('/login');
     await expectNoHorizontalOverflow(page);
+    // Regression: the login panel used to be centred in an auto-sized grid
+    // column and got clipped by the root `overflow-hidden` at 375px.
+    const panel = page.locator('main .glass').first();
+    const panelBox = await panel.boundingBox();
+    const viewport = page.viewportSize();
+    expect(panelBox).not.toBeNull();
+    expect(viewport).not.toBeNull();
+    expect(panelBox!.x).toBeGreaterThanOrEqual(0);
+    expect(panelBox!.x + panelBox!.width).toBeLessThanOrEqual(viewport!.width + 0.5);
     await screenshot(page, 'evidence-login-mobile', false);
 
     await signInAs(page, '江照');
