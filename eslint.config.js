@@ -6,7 +6,7 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', 'artifacts', 'coverage', 'playwright-report', 'test-results'] },
+  { ignores: ['dist', 'node_modules', 'artifacts', 'coverage', 'playwright-report', 'test-results', 'supabase'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
@@ -35,6 +35,20 @@ export default tseslint.config(
     files: ['scripts/**/*.{js,mjs}', '*.config.{js,ts}'],
     rules: {
       'no-console': 'off',
+    },
+  },
+  {
+    // These modules intentionally co-locate a React component with its hooks/helpers.
+    files: [
+      'src/app/AuthContext.tsx',
+      'src/app/RepositoryContext.tsx',
+      'src/app/router.tsx',
+      'src/components/ui/Field.tsx',
+      'src/components/ui/Toast.tsx',
+      'src/lib/markdown.tsx',
+    ],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   },
 );

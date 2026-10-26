@@ -48,6 +48,21 @@ const EXTENSION_TO_KIND: Record<string, AttachmentKind> = {
   wav: 'audio',
 };
 
+const EXTENSION_TO_MIME: Record<string, readonly string[]> = {
+  jpg: ['image/jpeg'],
+  jpeg: ['image/jpeg'],
+  png: ['image/png'],
+  webp: ['image/webp'],
+  mp4: ['video/mp4'],
+  webm: ['video/webm'],
+  mp3: ['audio/mpeg'],
+  m4a: ['audio/mp4'],
+  aac: ['audio/aac'],
+  ogg: ['audio/ogg'],
+  oga: ['audio/ogg'],
+  wav: ['audio/wav', 'audio/x-wav'],
+};
+
 export interface FileLike {
   name: string;
   type: string;
@@ -106,9 +121,8 @@ export function validateFileMeta(file: FileLike): UploadCheck {
     return { ok: false, reason: `MIME 类型 ${file.type} 与允许的${rule.label}格式不符。` };
   }
   if (file.type) {
-    const typeKind = attachmentKindOfMime(file.type);
-    const mimeExt = rule.extensions.includes(extension);
-    if (typeKind !== kind || !mimeExt) {
+    const expected = EXTENSION_TO_MIME[extension] ?? [];
+    if (!expected.includes(file.type)) {
       return { ok: false, reason: '文件扩展名与 MIME 类型不一致，已拒绝保存。' };
     }
   }

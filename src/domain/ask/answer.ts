@@ -14,7 +14,7 @@ export interface AskAnswer {
 }
 
 export const NO_EVIDENCE_ANSWER =
-  '暂无足够记录来回答这个问题。我没有在你的记忆库里找到可以支撑答案的内容，因此不会做推测。\n\n可以试试：换一个更具体的关键词、加上大致的时间（例如「2025年3月」），或先去时光长廊补上这段记忆。';
+  '暂无足够记录来回答这个问题。我没有在你的记忆库里找到可以支撑答案的内容，因此不会做推测。\n\n可以试试：换一个更具体的关键词、加上大致的时间（例如某年某月），或先去时光长廊补上这段记忆。';
 
 function sanitizeQuestion(question: string): string {
   return question.replace(/\s+/g, ' ').trim().slice(0, 60);

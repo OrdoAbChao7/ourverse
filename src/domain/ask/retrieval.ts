@@ -38,6 +38,89 @@ const INTENT_COUNT = /(多少|几条|几个|几次|一共|总共|数量|统计)/
 const INTENT_EARLIEST = /(第一次|最早|最初|头一次)/;
 const INTENT_LATEST = /(最近|最新|最后一次|上一次|上回)/;
 
+/**
+ * Words that describe the archive rather than its content. The intent parser
+ * already understands them, so leaving them as keywords would make
+ * "我们一共有多少条记忆" match nothing and return a wrong count.
+ */
+const GENERIC_TOKENS = new Set([
+  '记忆',
+  '记录',
+  '一条',
+  '一次',
+  '第一次',
+  '最早',
+  '最近',
+  '最新',
+  '最后',
+  '上一次',
+  '上回',
+  '时间',
+  '时候',
+  '内容',
+  '一共',
+  '总共',
+  '数量',
+  '多少',
+  '几条',
+  '几个',
+  '几次',
+]);
+
+/**
+ * Archive-structure phrases are stripped *before* tokenising, so they cannot
+ * produce junk bigrams like 条记 that make an otherwise empty query look like
+ * a keyword search. Intent and date parsing still see the original question.
+ */
+const ARCHIVE_PHRASES = [
+  '最后一次',
+  '什么时候',
+  '什么时间',
+  '第一次',
+  '上一次',
+  '一共有',
+  '多少条',
+  '多少个',
+  '多少次',
+  '哪一天',
+  '有哪些',
+  '有什么',
+  '最近',
+  '最新',
+  '最早',
+  '最初',
+  '上回',
+  '几条',
+  '几个',
+  '几次',
+  '一条',
+  '一次',
+  '记忆',
+  '记录',
+  '多少',
+  '一共',
+  '总共',
+  '数量',
+].sort((a, b) => b.length - a.length);
+
+const DATE_PATTERNS = [
+  /\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*日?/g,
+  /\d{4}\s*年\s*\d{1,2}\s*月/g,
+  /\d{4}-\d{1,2}(?:-\d{1,2})?/g,
+  /(?:今年|去年|前年|明年)/g,
+  /\d{1,2}\s*月\s*\d{1,2}\s*日/g,
+  /\d{1,2}\s*月份?/g,
+];
+
+function stripArchivePhrases(question: string): string {
+  let text = question;
+  for (const phrase of ARCHIVE_PHRASES) text = text.split(phrase).join(' ');
+  // The date is handled by extractDateConstraint; leaving its digits in the
+  // token stream would turn a pure date question into a keyword search.
+  for (const pattern of DATE_PATTERNS) text = text.replace(pattern, ' ');
+  return text;
+}
+
 export function analyzeQuestion(question: string, now: Date): QuestionAnalysis {
   const intent: AskIntent = INTENT_COUNT.test(question)
     ? 'count'
@@ -47,7 +130,7 @@ export function analyzeQuestion(question: string, now: Date): QuestionAnalysis {
         ? 'latest'
         : 'lookup';
   return {
-    tokens: tokenize(question),
+    tokens: tokenize(stripArchivePhrases(question)).filter((token) => !GENERIC_TOKENS.has(token.text)),
     constraint: extractDateConstraint(question, now),
     intent,
   };
@@ -108,8 +191,11 @@ function scoreFor(memory: MemoryWithAuthor, tokens: Token[], constraint: DateCon
       const [, month, day] = memory.occurredOn.split('-');
       dateHit = Number(month) === constraint.month && Number(day) === constraint.day;
     }
-    if (dateHit) score += 5;
-    else if (tokens.length === 0) return null;
+    // A date narrows the search; it only counts as evidence when it is the
+    // whole question or the keywords themselves matched.
+    if (dateHit && (tokens.length === 0 || matched.length > 0)) score += 5;
+    else if (!dateHit && tokens.length === 0) return null;
+    else if (!dateHit && matched.length === 0) return null;
   }
 
   if (score <= 0) return null;

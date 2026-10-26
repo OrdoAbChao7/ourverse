@@ -22,7 +22,7 @@ import type {
   UserRecord,
 } from './db';
 
-export const DEMO_SEED_VERSION = 3;
+export const DEMO_SEED_VERSION = 6;
 
 export interface DemoAsset {
   key: string;
@@ -110,6 +110,18 @@ const SEED_MEMORIES: SeedMemory[] = [
     tags: ['旅行', '夜晚', '第一次'],
     location: '夜行列车',
     assets: ['night-train.jpg'],
+  },
+  {
+    title: '第一次一起看电影',
+    bodyMd:
+      '老电影院只有一间厅，座椅是深红色的。电影放到一半，后排有人轻轻睡着了。\n\n散场以后下起小雨，我们绕了远路回去。',
+    daysAgo: 140,
+    time: '20:05',
+    author: 'b',
+    visibility: 'shared',
+    tags: ['电影', '第一次', '夜晚'],
+    location: '老电影院',
+    assets: [],
   },
   {
     title: '一起录下的房间声音',
@@ -409,7 +421,7 @@ export async function writeDemoSeed(
         sha256: await sha256Hex(blob),
         kind: definition.kind,
         createdAt: occurredAt,
-        blob,
+        data: await blob.arrayBuffer(),
       });
     }
 

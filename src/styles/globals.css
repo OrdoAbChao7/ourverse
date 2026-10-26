@@ -35,6 +35,35 @@
   --ease-quiet: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+@keyframes ov-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ov-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ov-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -12px, 0);
+  }
+}
+
 @layer base {
   :root {
     color-scheme: dark;
@@ -43,6 +72,8 @@
     --hairline: rgba(255, 255, 255, 0.075);
     --hairline-strong: rgba(255, 255, 255, 0.13);
     --shell-max: 1280px;
+    --space-accent: #b9a1e8;
+    --space-accent-rgb: 185, 161, 232;
   }
 
   * {
@@ -191,7 +222,7 @@
 
   .hero-glow {
     background:
-      radial-gradient(58% 58% at 50% 46%, rgba(185, 161, 232, 0.16), transparent 70%),
+      radial-gradient(58% 58% at 50% 46%, rgba(var(--space-accent-rgb), 0.16), transparent 70%),
       radial-gradient(38% 38% at 68% 58%, rgba(240, 212, 156, 0.09), transparent 72%);
   }
 

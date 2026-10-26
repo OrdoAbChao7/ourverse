@@ -1,0 +1,11 @@
+-- OURVERSE seed
+--
+-- Intentionally empty.
+--
+-- The product must not ship real private material, and the local stack should
+-- not invent user accounts or “shared” memories that could be mistaken for real
+-- data. Demo content lives in the frontend's explicitly labelled DEMO seed
+-- (src/data/local/seed.ts).
+--
+-- To exercise RLS locally, use `npx supabase test db`; the pgTAP suite creates
+-- its own local-only auth.users fixtures inside a rolled-back transaction.

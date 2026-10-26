@@ -46,7 +46,8 @@ export interface InviteRecord {
 export type MemoryRecord = Omit<Memory, 'attachments'>;
 
 export interface AttachmentRecord extends Attachment {
-  blob: Blob;
+  /** ArrayBuffer instead of Blob so IndexedDB cloning is portable in every runtime. */
+  data: ArrayBuffer;
 }
 
 export type AnniversaryRecord = Anniversary;

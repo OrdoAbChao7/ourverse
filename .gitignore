@@ -8,9 +8,12 @@ coverage/
 artifacts/test-results/
 artifacts/playwright-report/
 artifacts/lighthouse/
+artifacts/exports/
+artifacts/*.sql
 playwright-report/
 test-results/
 export-tmp/
+*.tsbuildinfo
 
 # env & secrets — never commit real credentials
 .env

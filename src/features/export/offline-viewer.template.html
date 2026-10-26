@@ -1,0 +1,2694 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="OURVERSE 离线数字博物馆：完全离线、可校验的私人记忆副本。">
+  <title>__TITLE__</title>
+  <style>
+    :root {
+      --night: #08111f;
+      --abyss: #060b14;
+      --deep: #101b35;
+      --ink: #f5f7fa;
+      --mist: #a9b8cb;
+      --dim: #73839b;
+      --violet: #b9a1e8;
+      --gold: #f0d49c;
+      --cyan: #82c5cf;
+      --rose: #e0a2b6;
+      --hairline: rgba(255, 255, 255, 0.08);
+      --hairline-strong: rgba(255, 255, 255, 0.15);
+      --surface: rgba(255, 255, 255, 0.038);
+      --surface-raised: rgba(255, 255, 255, 0.062);
+      --shadow: 0 34px 90px -52px rgba(0, 0, 0, 0.96);
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Source Han Sans SC", sans-serif;
+      --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+      --radius: 20px;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-color: var(--abyss);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      font-feature-settings: "palt" 1;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body.is-locked {
+      overflow: hidden;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    a {
+      color: inherit;
+      text-underline-offset: 3px;
+    }
+
+    button,
+    input {
+      font: inherit;
+      color: inherit;
+    }
+
+    img,
+    video {
+      max-width: 100%;
+    }
+
+    :focus-visible {
+      outline: 2px solid rgba(185, 161, 232, 0.92);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+
+    ::selection {
+      background: rgba(185, 161, 232, 0.34);
+      color: #fff;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .skip-link {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 120;
+      transform: translateY(-160%);
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: var(--violet);
+      color: #140b26;
+      font-weight: 650;
+      text-decoration: none;
+      transition: transform 0.2s var(--ease);
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    /* ── Midnight sky ─────────────────────────────────────────────── */
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      overflow: hidden;
+      background:
+        radial-gradient(1100px 720px at 16% -12%, rgba(185, 161, 232, 0.14), transparent 62%),
+        radial-gradient(900px 640px at 88% -4%, rgba(130, 197, 207, 0.09), transparent 60%),
+        radial-gradient(1000px 900px at 50% 118%, rgba(240, 212, 156, 0.06), transparent 62%),
+        linear-gradient(180deg, #08111f 0%, #07101c 48%, #060b14 100%);
+    }
+
+    .stars {
+      position: absolute;
+      inset: -30%;
+      background-repeat: repeat;
+      pointer-events: none;
+    }
+
+    .stars-a {
+      background-image:
+        radial-gradient(1px 1px at 20px 30px, rgba(245, 247, 250, 0.9), transparent 1.6px),
+        radial-gradient(1px 1px at 140px 84px, rgba(185, 161, 232, 0.72), transparent 1.6px),
+        radial-gradient(1.4px 1.4px at 264px 162px, rgba(240, 212, 156, 0.64), transparent 1.9px),
+        radial-gradient(1px 1px at 338px 48px, rgba(130, 197, 207, 0.7), transparent 1.6px),
+        radial-gradient(1px 1px at 86px 220px, rgba(245, 247, 250, 0.5), transparent 1.6px);
+      background-size: 390px 270px;
+      opacity: 0.72;
+      animation: drift 240s linear infinite;
+    }
+
+    .stars-b {
+      background-image:
+        radial-gradient(1.2px 1.2px at 60px 110px, rgba(245, 247, 250, 0.8), transparent 1.8px),
+        radial-gradient(1px 1px at 210px 40px, rgba(130, 197, 207, 0.62), transparent 1.6px),
+        radial-gradient(1.6px 1.6px at 430px 250px, rgba(185, 161, 232, 0.58), transparent 2.1px),
+        radial-gradient(1px 1px at 560px 130px, rgba(240, 212, 156, 0.55), transparent 1.6px),
+        radial-gradient(1px 1px at 320px 330px, rgba(245, 247, 250, 0.42), transparent 1.6px);
+      background-size: 640px 470px;
+      opacity: 0.5;
+      animation: drift 380s linear infinite reverse;
+    }
+
+    .aurora {
+      position: absolute;
+      width: 62vw;
+      height: 62vw;
+      max-width: 900px;
+      max-height: 900px;
+      left: -12vw;
+      top: -18vw;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(185, 161, 232, 0.16), transparent 68%);
+      filter: blur(46px);
+      opacity: 0.85;
+    }
+
+    .grain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.3;
+      background-image:
+        radial-gradient(1px 1px at 30% 20%, rgba(255, 255, 255, 0.22), transparent 1.4px),
+        radial-gradient(1px 1px at 70% 60%, rgba(255, 255, 255, 0.14), transparent 1.4px);
+      background-size: 190px 190px;
+    }
+
+    @keyframes drift {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-90px, 60px, 0); }
+    }
+
+    /* ── Shell ────────────────────────────────────────────────────── */
+    .shell {
+      width: 100%;
+      max-width: 1264px;
+      margin: 0 auto;
+      padding: 0 clamp(16px, 4vw, 48px) clamp(48px, 8vw, 96px);
+    }
+
+    .cover {
+      position: relative;
+      overflow: hidden;
+      margin-top: clamp(18px, 4vw, 44px);
+      padding: clamp(26px, 5vw, 64px);
+      border: 1px solid var(--hairline);
+      border-radius: clamp(22px, 3vw, 32px);
+      background:
+        linear-gradient(148deg, rgba(255, 255, 255, 0.068), rgba(255, 255, 255, 0.015) 48%, rgba(185, 161, 232, 0.055));
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(24px) saturate(122%);
+      -webkit-backdrop-filter: blur(24px) saturate(122%);
+    }
+
+    .cover-glow {
+      position: absolute;
+      width: 460px;
+      height: 460px;
+      right: -140px;
+      top: -190px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(240, 212, 156, 0.16), transparent 66%);
+      filter: blur(22px);
+      pointer-events: none;
+    }
+
+    .brand-row {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: clamp(38px, 6vw, 68px);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.28em;
+      color: var(--ink);
+    }
+
+    .brand-star {
+      color: var(--gold);
+      font-size: 0.95rem;
+      letter-spacing: 0;
+    }
+
+    .brand-sub {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+    }
+
+    .cover-main {
+      position: relative;
+      max-width: 780px;
+    }
+
+    .eyebrow,
+    .section-kicker,
+    .sheet-kicker,
+    .detail-kicker {
+      margin: 0 0 14px;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.24em;
+      color: var(--violet);
+      text-transform: uppercase;
+    }
+
+    .cover h1 {
+      margin: 0;
+      font-size: clamp(2.5rem, 6.4vw, 4.8rem);
+      line-height: 1.02;
+      letter-spacing: -0.025em;
+      font-weight: 560;
+      background: linear-gradient(103deg, #ffffff 0%, #ddd4f4 44%, #f0d49c 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-wrap: balance;
+      overflow-wrap: anywhere;
+    }
+
+    .motto {
+      margin: 18px 0 0;
+      max-width: 48ch;
+      font-size: clamp(1rem, 1.7vw, 1.2rem);
+      line-height: 1.8;
+      color: var(--mist);
+      text-wrap: pretty;
+    }
+
+    .members {
+      margin: 8px 0 0;
+      font-size: 0.84rem;
+      letter-spacing: 0.04em;
+      color: var(--dim);
+    }
+
+    .cover-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 9px;
+      margin-top: 26px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid var(--hairline);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.028);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      color: var(--mist);
+      white-space: nowrap;
+    }
+
+    .pill-scope {
+      border-color: rgba(185, 161, 232, 0.3);
+      color: #d9cff2;
+      background: rgba(185, 161, 232, 0.09);
+    }
+
+    .pill-quiet {
+      color: var(--dim);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+    }
+
+    .badge-demo {
+      border: 1px solid rgba(240, 212, 156, 0.38);
+      background: rgba(240, 212, 156, 0.1);
+      color: var(--gold);
+    }
+
+    .stats {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: clamp(10px, 2.4vw, 34px);
+      margin: clamp(36px, 6vw, 62px) 0 0;
+      padding: clamp(18px, 2.6vw, 28px) 0 0;
+      border-top: 1px solid var(--hairline);
+    }
+
+    .stat dt {
+      margin: 0 0 6px;
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      color: var(--dim);
+    }
+
+    .stat dd {
+      margin: 0;
+      font-family: var(--font-mono);
+      font-size: clamp(1.35rem, 2.5vw, 2.05rem);
+      line-height: 1;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .cover-note {
+      position: relative;
+      margin: clamp(22px, 3vw, 32px) 0 0;
+      max-width: 68ch;
+      font-size: 0.84rem;
+      line-height: 1.75;
+      color: var(--dim);
+    }
+
+    /* ── Toolbar ──────────────────────────────────────────────────── */
+    .toolbar {
+      position: sticky;
+      top: 12px;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-top: clamp(20px, 3vw, 32px);
+      padding: 12px;
+      border: 1px solid var(--hairline);
+      border-radius: 18px;
+      background: rgba(8, 17, 31, 0.82);
+      box-shadow: 0 18px 44px -32px rgba(0, 0, 0, 0.95);
+      backdrop-filter: blur(22px) saturate(125%);
+      -webkit-backdrop-filter: blur(22px) saturate(125%);
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1 1 260px;
+      min-width: 0;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--dim);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    #search {
+      width: 100%;
+      height: 42px;
+      padding: 0 14px 0 38px;
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.032);
+      color: var(--ink);
+      font-size: 0.9rem;
+      transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+    }
+
+    #search::placeholder {
+      color: rgba(169, 184, 203, 0.46);
+    }
+
+    #search:hover {
+      border-color: var(--hairline-strong);
+    }
+
+    #search:focus {
+      outline: none;
+      border-color: rgba(185, 161, 232, 0.55);
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 0 3px rgba(185, 161, 232, 0.12);
+    }
+
+    .chips {
+      display: flex;
+      flex: 0 1 auto;
+      gap: 6px;
+      max-width: 100%;
+      overflow-x: auto;
+      padding: 2px;
+      scrollbar-width: none;
+    }
+
+    .chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      flex: 0 0 auto;
+      padding: 8px 13px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.032);
+      color: var(--mist);
+      font-size: 0.78rem;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: background 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
+    }
+
+    .chip:hover {
+      background: rgba(255, 255, 255, 0.065);
+      color: var(--ink);
+    }
+
+    .chip.is-active {
+      border-color: rgba(185, 161, 232, 0.42);
+      background: rgba(185, 161, 232, 0.16);
+      color: #eee8fb;
+    }
+
+    .result-line {
+      flex: 1 0 100%;
+      margin: 0;
+      padding: 0 4px 2px;
+      font-size: 0.74rem;
+      color: var(--dim);
+    }
+
+    /* ── Sections ─────────────────────────────────────────────────── */
+    .section {
+      margin-top: clamp(44px, 7vw, 84px);
+    }
+
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px 24px;
+      margin-bottom: 22px;
+    }
+
+    .section-kicker {
+      margin-bottom: 8px;
+      color: var(--dim);
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+      font-weight: 560;
+      letter-spacing: -0.01em;
+    }
+
+    .section-note {
+      margin: 0;
+      max-width: 52ch;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: var(--dim);
+    }
+
+    /* ── Timeline ─────────────────────────────────────────────────── */
+    .timeline {
+      display: grid;
+      gap: clamp(28px, 4vw, 44px);
+    }
+
+    .month {
+      position: relative;
+      padding-left: clamp(18px, 3vw, 30px);
+      border-left: 1px solid var(--hairline);
+    }
+
+    .month::before {
+      content: "";
+      position: absolute;
+      left: -4px;
+      top: 7px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--violet);
+      box-shadow: 0 0 16px rgba(185, 161, 232, 0.7);
+    }
+
+    .month-head {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .month-title {
+      margin: 0;
+      font-family: var(--font-mono);
+      font-size: 0.86rem;
+      font-weight: 550;
+      letter-spacing: 0.12em;
+      color: var(--mist);
+    }
+
+    .month-count {
+      font-size: 0.7rem;
+      color: var(--dim);
+    }
+
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+      gap: clamp(12px, 2vw, 20px);
+    }
+
+    .memory-card {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.017));
+      box-shadow: 0 24px 64px -48px rgba(0, 0, 0, 0.95);
+      cursor: pointer;
+      transition: transform 0.28s var(--ease), border-color 0.28s var(--ease), box-shadow 0.28s var(--ease);
+    }
+
+    .memory-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(185, 161, 232, 0.32);
+      box-shadow: 0 34px 74px -42px rgba(0, 0, 0, 0.98), 0 0 46px -28px rgba(185, 161, 232, 0.5);
+    }
+
+    .card-media {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: linear-gradient(145deg, rgba(185, 161, 232, 0.13), rgba(16, 27, 53, 0.72) 65%);
+    }
+
+    .card-media img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s var(--ease);
+    }
+
+    .memory-card:hover .card-media img {
+      transform: scale(1.035);
+    }
+
+    .card-media-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-media.is-missing {
+      background: linear-gradient(145deg, rgba(115, 131, 155, 0.14), rgba(16, 27, 53, 0.7));
+    }
+
+    .media-count {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(4, 8, 16, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-family: var(--font-mono);
+      font-size: 0.64rem;
+      letter-spacing: 0.04em;
+      color: #e8edf5;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .media-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 110px;
+      color: rgba(169, 184, 203, 0.72);
+    }
+
+    .placeholder-glyph {
+      font-size: 1.6rem;
+      color: var(--violet);
+      opacity: 0.85;
+    }
+
+    .placeholder-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      color: var(--dim);
+    }
+
+    .card-body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 10px;
+      padding: 16px 17px 17px;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .card-date {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      color: var(--dim);
+    }
+
+    .vis-badge {
+      flex: 0 0 auto;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.62rem;
+      letter-spacing: 0.04em;
+      border: 1px solid transparent;
+    }
+
+    .vis-badge.is-shared {
+      border-color: rgba(130, 197, 207, 0.26);
+      background: rgba(130, 197, 207, 0.08);
+      color: var(--cyan);
+    }
+
+    .vis-badge.is-private {
+      border-color: rgba(185, 161, 232, 0.3);
+      background: rgba(185, 161, 232, 0.09);
+      color: var(--violet);
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 1.03rem;
+      line-height: 1.42;
+      font-weight: 570;
+      letter-spacing: 0.004em;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      overflow-wrap: anywhere;
+    }
+
+    .card-excerpt {
+      margin: 0;
+      font-size: 0.81rem;
+      line-height: 1.72;
+      color: var(--mist);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 4px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .tag {
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.045);
+      font-size: 0.63rem;
+      color: var(--mist);
+      white-space: nowrap;
+    }
+
+    .tag-more {
+      color: var(--dim);
+    }
+
+    .card-author {
+      flex: 0 0 auto;
+      font-size: 0.66rem;
+      letter-spacing: 0.05em;
+      color: var(--dim);
+    }
+
+    /* ── Empty ────────────────────────────────────────────────────── */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: clamp(40px, 8vw, 76px) 20px;
+      border: 1px dashed var(--hairline-strong);
+      border-radius: var(--radius);
+      text-align: center;
+    }
+
+    .empty-star {
+      font-size: 1.6rem;
+      color: var(--violet);
+      opacity: 0.8;
+    }
+
+    .empty-title {
+      margin: 4px 0 0;
+      font-size: 1rem;
+      color: var(--ink);
+    }
+
+    .empty-text {
+      margin: 0;
+      font-size: 0.82rem;
+      color: var(--dim);
+    }
+
+    .ghost-btn {
+      margin-top: 10px;
+      padding: 9px 16px;
+      border: 1px solid var(--hairline-strong);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--mist);
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: background 0.2s var(--ease), color 0.2s var(--ease);
+    }
+
+    .ghost-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--ink);
+    }
+
+    .fatal {
+      margin: 24px 0;
+      padding: 16px 18px;
+      border: 1px solid rgba(224, 162, 182, 0.4);
+      border-radius: 12px;
+      background: rgba(224, 162, 182, 0.08);
+      color: #f3d6de;
+    }
+
+    /* ── Galleries ────────────────────────────────────────────────── */
+    .gallery-block {
+      margin-top: 26px;
+    }
+
+    .gallery-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .gallery-head h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 550;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+    }
+
+    .gallery-count {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--dim);
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 190px), 1fr));
+      gap: clamp(8px, 1.4vw, 14px);
+    }
+
+    .photo-grid figure {
+      margin: 0;
+      min-width: 0;
+    }
+
+    .photo-tile {
+      position: relative;
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid var(--hairline);
+      border-radius: 13px;
+      background: linear-gradient(145deg, rgba(185, 161, 232, 0.13), rgba(16, 27, 53, 0.72));
+      cursor: zoom-in;
+    }
+
+    .photo-tile img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s var(--ease), opacity 0.3s var(--ease);
+    }
+
+    .photo-tile:hover img {
+      transform: scale(1.04);
+    }
+
+    .photo-tile.is-missing {
+      cursor: default;
+    }
+
+    .photo-grid figcaption {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 7px 3px 0;
+      font-size: 0.66rem;
+      color: var(--dim);
+    }
+
+    .photo-caption-title {
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      color: var(--mist);
+    }
+
+    .photo-caption-date {
+      flex: 0 0 auto;
+      font-family: var(--font-mono);
+    }
+
+    .gallery-empty {
+      margin: 0;
+      padding: 18px 4px;
+      font-size: 0.8rem;
+      color: var(--dim);
+    }
+
+    .audio-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr));
+      gap: 12px;
+    }
+
+    .audio-item {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      padding: 15px 16px;
+      border: 1px solid var(--hairline);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.026);
+    }
+
+    .audio-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .audio-title {
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: 0.88rem;
+      color: var(--ink);
+    }
+
+    .audio-date {
+      flex: 0 0 auto;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--dim);
+    }
+
+    .audio-item audio {
+      width: 100%;
+      height: 38px;
+      accent-color: var(--violet);
+    }
+
+    .media-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .file-name {
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      color: var(--dim);
+    }
+
+    .download-link {
+      flex: 0 0 auto;
+      font-size: 0.68rem;
+      color: var(--cyan);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(130, 197, 207, 0.35);
+    }
+
+    .download-link:hover {
+      color: #b9e4ea;
+      border-bottom-color: currentColor;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+      gap: 14px;
+    }
+
+    .video-item {
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid var(--hairline);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.026);
+    }
+
+    .video-item video {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #04080f;
+      accent-color: var(--violet);
+    }
+
+    .video-caption {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 11px 14px 13px;
+    }
+
+    .video-title {
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: 0.84rem;
+      color: var(--ink);
+    }
+
+    .video-date {
+      flex: 0 0 auto;
+      font-family: var(--font-mono);
+      font-size: 0.64rem;
+      color: var(--dim);
+    }
+
+    .media-warning {
+      margin: 0;
+      padding: 0 14px 12px;
+      font-size: 0.72rem;
+      color: var(--gold);
+    }
+
+    /* ── About ────────────────────────────────────────────────────── */
+    .about {
+      padding: clamp(22px, 4vw, 42px);
+      border: 1px solid var(--hairline);
+      border-radius: clamp(20px, 3vw, 28px);
+      background:
+        linear-gradient(160deg, rgba(185, 161, 232, 0.06), rgba(255, 255, 255, 0.018) 45%, rgba(130, 197, 207, 0.04));
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+      gap: clamp(12px, 2vw, 20px);
+      margin-top: 8px;
+    }
+
+    .about-card {
+      padding: 18px 18px 20px;
+      border: 1px solid var(--hairline);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.022);
+    }
+
+    .about-index {
+      display: block;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      color: var(--violet);
+    }
+
+    .about-card h3 {
+      margin: 0 0 8px;
+      font-size: 0.92rem;
+      font-weight: 570;
+    }
+
+    .about-card p {
+      margin: 0;
+      font-size: 0.79rem;
+      line-height: 1.78;
+      color: var(--mist);
+      text-wrap: pretty;
+    }
+
+    .about-card code {
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.07);
+      font-family: var(--font-mono);
+      font-size: 0.92em;
+      color: #dfe6f1;
+      overflow-wrap: anywhere;
+    }
+
+    .about-foot {
+      margin: 20px 0 0;
+      padding-top: 16px;
+      border-top: 1px solid var(--hairline);
+      font-size: 0.76rem;
+      line-height: 1.75;
+      color: var(--dim);
+    }
+
+    .site-foot {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: clamp(38px, 6vw, 64px);
+      padding-top: 20px;
+      border-top: 1px solid var(--hairline);
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      letter-spacing: 0.08em;
+      color: var(--dim);
+    }
+
+    .noscript {
+      margin: 20px 0;
+      padding: 14px 16px;
+      border: 1px solid rgba(240, 212, 156, 0.4);
+      border-radius: 12px;
+      background: rgba(240, 212, 156, 0.09);
+      color: var(--gold);
+    }
+
+    /* ── Detail sheet ─────────────────────────────────────────────── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      overflow-y: auto;
+      padding: clamp(10px, 4vw, 48px);
+      background: rgba(3, 6, 12, 0.74);
+      backdrop-filter: blur(16px) saturate(118%);
+      -webkit-backdrop-filter: blur(16px) saturate(118%);
+    }
+
+    .sheet {
+      position: relative;
+      width: min(900px, 100%);
+      margin: auto 0;
+      padding: clamp(20px, 4vw, 44px);
+      border: 1px solid var(--hairline-strong);
+      border-radius: clamp(18px, 3vw, 26px);
+      background:
+        linear-gradient(165deg, rgba(255, 255, 255, 0.075), rgba(9, 18, 33, 0.96) 34%, rgba(7, 14, 26, 0.98));
+      box-shadow: 0 50px 120px -50px rgba(0, 0, 0, 1);
+      animation: rise 0.32s var(--ease);
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sheet-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+
+    .sheet-kicker {
+      margin: 0;
+    }
+
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border: 1px solid var(--hairline);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--mist);
+      font-size: 0.95rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
+    }
+
+    .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: var(--hairline-strong);
+      color: var(--ink);
+    }
+
+    .detail-title {
+      margin: 0 0 12px;
+      font-size: clamp(1.55rem, 3.6vw, 2.45rem);
+      line-height: 1.18;
+      letter-spacing: -0.015em;
+      font-weight: 560;
+      text-wrap: balance;
+    }
+
+    .detail-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      font-size: 0.72rem;
+      color: var(--dim);
+    }
+
+    .detail-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+      gap: 12px 20px;
+      margin: 0 0 26px;
+      padding: 16px 0;
+      border-top: 1px solid var(--hairline);
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .detail-meta div {
+      min-width: 0;
+    }
+
+    .detail-meta dt {
+      margin: 0 0 4px;
+      font-size: 0.64rem;
+      letter-spacing: 0.12em;
+      color: var(--dim);
+    }
+
+    .detail-meta dd {
+      margin: 0;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: var(--mist);
+      overflow-wrap: anywhere;
+    }
+
+    .prose {
+      color: var(--mist);
+      font-size: 0.92rem;
+      line-height: 1.88;
+      overflow-wrap: anywhere;
+    }
+
+    .prose h1,
+    .prose h2,
+    .prose h3,
+    .prose h4 {
+      margin: 1.45em 0 0.55em;
+      line-height: 1.36;
+      color: var(--ink);
+      font-weight: 570;
+    }
+
+    .prose h1 { font-size: 1.42rem; }
+    .prose h2 { font-size: 1.24rem; }
+    .prose h3 { font-size: 1.08rem; }
+    .prose h4 { font-size: 0.98rem; }
+
+    .prose p {
+      margin: 0.9em 0;
+    }
+
+    .prose strong {
+      color: #eaeff7;
+      font-weight: 650;
+    }
+
+    .prose em {
+      color: #dfe6f1;
+    }
+
+    .prose code {
+      padding: 0.12em 0.4em;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.075);
+      font-family: var(--font-mono);
+      font-size: 0.86em;
+      color: #e8eef7;
+    }
+
+    .prose pre {
+      margin: 1.1em 0;
+      padding: 14px 16px;
+      overflow-x: auto;
+      border: 1px solid var(--hairline);
+      border-radius: 11px;
+      background: rgba(4, 8, 16, 0.7);
+    }
+
+    .prose pre code {
+      padding: 0;
+      background: none;
+      font-size: 0.78rem;
+      line-height: 1.7;
+    }
+
+    .prose ul,
+    .prose ol {
+      margin: 0.9em 0;
+      padding-left: 1.4em;
+    }
+
+    .prose ul { list-style: disc; }
+    .prose ol { list-style: decimal; }
+
+    .prose li {
+      margin: 0.35em 0;
+    }
+
+    .prose blockquote {
+      margin: 1.1em 0;
+      padding: 0.3em 0 0.3em 1em;
+      border-left: 2px solid rgba(185, 161, 232, 0.5);
+      color: #c8d2e0;
+      font-style: italic;
+    }
+
+    .prose a {
+      color: var(--cyan);
+      text-decoration: underline;
+      text-decoration-color: rgba(130, 197, 207, 0.5);
+    }
+
+    .prose hr {
+      margin: 1.7em 0;
+      border: 0;
+      border-top: 1px solid var(--hairline);
+    }
+
+    .prose-empty {
+      color: var(--dim);
+      font-style: italic;
+    }
+
+    .detail-media {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--hairline);
+    }
+
+    .detail-media h3 {
+      margin: 0 0 12px;
+      font-size: 0.9rem;
+      font-weight: 560;
+      letter-spacing: 0.03em;
+      color: var(--ink);
+    }
+
+    .detail-image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr));
+      gap: 10px;
+    }
+
+    .detail-image-button {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid var(--hairline);
+      border-radius: 11px;
+      background: rgba(255, 255, 255, 0.03);
+      cursor: zoom-in;
+    }
+
+    .detail-image-button img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .detail-image-button.is-missing {
+      cursor: default;
+    }
+
+    .detail-audio,
+    .detail-video {
+      margin-top: 10px;
+      padding: 13px 14px;
+      border: 1px solid var(--hairline);
+      border-radius: 13px;
+      background: rgba(255, 255, 255, 0.026);
+    }
+
+    .detail-audio audio,
+    .detail-video video {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      accent-color: var(--violet);
+    }
+
+    .detail-video video {
+      aspect-ratio: 16 / 9;
+      background: #04080f;
+      border-radius: 9px;
+    }
+
+    /* ── Lightbox ─────────────────────────────────────────────────── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(6px, 2vw, 24px);
+      padding: clamp(10px, 4vw, 44px);
+      background: rgba(2, 5, 10, 0.95);
+    }
+
+    .lb-figure {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      max-width: min(1120px, 88vw);
+      margin: 0;
+    }
+
+    #lb-img {
+      display: block;
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 1);
+    }
+
+    #lb-caption {
+      max-width: 70ch;
+      text-align: center;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: var(--mist);
+    }
+
+    .lb-error {
+      margin: 0;
+      padding: 24px;
+      color: var(--gold);
+      font-size: 0.85rem;
+    }
+
+    .lb-nav,
+    .lightbox-close {
+      flex: 0 0 auto;
+    }
+
+    .lb-nav {
+      width: 44px;
+      height: 44px;
+      font-size: 1.4rem;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: clamp(10px, 3vw, 24px);
+      right: clamp(10px, 3vw, 24px);
+    }
+
+    .lb-count {
+      position: absolute;
+      left: 50%;
+      bottom: clamp(10px, 3vw, 24px);
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      color: var(--dim);
+    }
+
+    /* ── Responsive ───────────────────────────────────────────────── */
+    @media (max-width: 720px) {
+      .cover {
+        padding: 24px 20px 26px;
+      }
+
+      .brand-row {
+        margin-bottom: 34px;
+      }
+
+      .brand-sub {
+        display: none;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 20px;
+      }
+
+      .stat:last-child {
+        grid-column: span 2;
+      }
+
+      .toolbar {
+        position: static;
+        padding: 10px;
+      }
+
+      .chips {
+        flex: 1 0 100%;
+      }
+
+      .month-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sheet {
+        border-radius: 18px;
+      }
+
+      .lb-figure {
+        max-width: 88vw;
+      }
+
+      #lb-img {
+        max-height: 68vh;
+      }
+
+      .lb-nav {
+        width: 38px;
+        height: 38px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .photo-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .detail-meta {
+        grid-template-columns: 1fr;
+      }
+
+      .lightbox {
+        gap: 2px;
+        padding: 8px;
+      }
+
+      .lb-nav {
+        position: absolute;
+        bottom: 34px;
+        z-index: 2;
+      }
+
+      .lb-prev { left: 14px; }
+      .lb-next { right: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .stars-a,
+      .stars-b,
+      .sheet {
+        animation: none !important;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#museum-main">跳到主要内容</a>
+
+  <div class="sky" aria-hidden="true">
+    <div class="stars stars-a"></div>
+    <div class="stars stars-b"></div>
+    <div class="aurora"></div>
+    <div class="grain"></div>
+  </div>
+
+  <div class="shell">
+    <header class="cover" aria-labelledby="space-name">
+      <div class="cover-glow" aria-hidden="true"></div>
+      <div class="brand-row">
+        <span class="brand"><span class="brand-star" aria-hidden="true">✦</span>OURVERSE</span>
+        <span class="brand-sub">数字博物馆 · OFFLINE EDITION</span>
+      </div>
+      <div class="cover-main">
+        <p class="eyebrow">MIDNIGHT OBSERVATORY</p>
+        <h1 id="space-name">OURVERSE</h1>
+        <p class="motto" id="space-motto">把故事留在星光里。</p>
+        <p class="members" id="members">一段只属于两个人的记忆</p>
+        <div class="cover-meta">
+          <span class="pill" id="generated-at">__GENERATED_AT__</span>
+          <span class="pill pill-scope" id="scope-label">__SCOPE_LABEL__</span>
+          <span class="pill pill-quiet" id="viewer-name">私人离线副本</span>
+          <span id="demo-badge">__DEMO_BADGE__</span>
+        </div>
+      </div>
+      <dl class="stats" id="stats" aria-label="馆藏统计"></dl>
+      <p class="cover-note" id="cover-note">这是一份完全离线的私人副本。双击本文件即可浏览，不需要网络、账号或服务端。</p>
+    </header>
+
+    <main id="museum-main">
+      <noscript>
+        <p class="noscript">离线博物馆需要 JavaScript 才能浏览。请在浏览器中启用 JavaScript 后重新打开本文件。</p>
+      </noscript>
+
+      <section class="toolbar" aria-label="搜索与筛选">
+        <div class="search-wrap">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <label class="sr-only" for="search">搜索记忆</label>
+          <input id="search" type="search" placeholder="搜索标题、正文、标签或地点…" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="chips" id="chips" role="group" aria-label="按类型筛选">
+          <button type="button" class="chip is-active" data-filter="all" aria-pressed="true">全部</button>
+          <button type="button" class="chip" data-filter="photos" aria-pressed="false">照片</button>
+          <button type="button" class="chip" data-filter="audio" aria-pressed="false">声音</button>
+          <button type="button" class="chip" data-filter="video" aria-pressed="false">影像</button>
+          <button type="button" class="chip" data-filter="text" aria-pressed="false">文字</button>
+          <button type="button" class="chip" data-filter="shared" aria-pressed="false">仅共同</button>
+          <button type="button" class="chip" data-filter="private" aria-pressed="false">仅私密</button>
+        </div>
+        <p class="result-line" id="result-line" aria-live="polite"></p>
+      </section>
+
+      <section class="section" aria-labelledby="timeline-title">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">TIMELINE</p>
+            <h2 id="timeline-title">时光长廊</h2>
+          </div>
+          <p class="section-note" id="timeline-note">按月归档，最近发生的记忆排在前面。</p>
+        </div>
+        <div class="timeline" id="timeline"></div>
+        <div class="empty-state" id="timeline-empty" hidden>
+          <span class="empty-star" aria-hidden="true">✦</span>
+          <p class="empty-title">没有找到匹配的记忆</p>
+          <p class="empty-text">试试清空搜索词，或切换到其他筛选项。</p>
+          <button type="button" class="ghost-btn" id="reset-filters">显示全部记忆</button>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="gallery-title">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">COLLECTION</p>
+            <h2 id="gallery-title">馆藏展厅</h2>
+          </div>
+          <p class="section-note">原始文件随包保存，未转码。点击照片可放大，音视频可直接播放。</p>
+        </div>
+
+        <div class="gallery-block" id="photo-block">
+          <div class="gallery-head">
+            <h3>照片</h3>
+            <span class="gallery-count" id="photo-count">0 张</span>
+          </div>
+          <div class="photo-grid" id="photo-grid"></div>
+          <p class="gallery-empty" id="photo-empty" hidden>本次导出没有包含照片。</p>
+        </div>
+
+        <div class="gallery-block" id="audio-block">
+          <div class="gallery-head">
+            <h3>声音</h3>
+            <span class="gallery-count" id="audio-count">0 段</span>
+          </div>
+          <div class="audio-list" id="audio-list"></div>
+          <p class="gallery-empty" id="audio-empty" hidden>本次导出没有包含声音文件。</p>
+        </div>
+
+        <div class="gallery-block" id="video-block">
+          <div class="gallery-head">
+            <h3>影像</h3>
+            <span class="gallery-count" id="video-count">0 段</span>
+          </div>
+          <div class="video-grid" id="video-grid"></div>
+          <p class="gallery-empty" id="video-empty" hidden>本次导出没有包含影像文件。</p>
+        </div>
+      </section>
+
+      <section class="section about" id="about" aria-labelledby="about-title">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">COLOPHON</p>
+            <h2 id="about-title">关于这个离线博物馆</h2>
+          </div>
+          <p class="section-note">没有网络请求，没有账号，也没有远程服务。</p>
+        </div>
+        <div class="about-grid">
+          <article class="about-card">
+            <span class="about-index">01 · PRIVACY</span>
+            <h3>隐私边界</h3>
+            <p>包内只包含当前导出者有权查看的内容。对方仅自己可见的记忆、附件与纪念日不会出现在这里，密封中的时间胶囊也不会被解开。</p>
+          </article>
+          <article class="about-card">
+            <span class="about-index">02 · INTEGRITY</span>
+            <h3>完整性</h3>
+            <p>每个文件都有 SHA-256 校验值。可在解压目录执行 <code>sha256sum -c SHA256SUMS.txt</code>，或运行项目中的 <code>verify-export.mjs</code> 校验整个包。</p>
+          </article>
+          <article class="about-card">
+            <span class="about-index">03 · PORTABILITY</span>
+            <h3>可迁移</h3>
+            <p>文字同时以 Markdown 保存，结构化数据保存在 <code>memories.json</code> 与 <code>meta.json</code>，媒体保留原始文件，不依赖本页面也能长期读取。</p>
+          </article>
+          <article class="about-card">
+            <span class="about-index">04 · BACKUP</span>
+            <h3>长期保存</h3>
+            <p>ZIP 默认不加密，请只放在信任的设备上。至少保留两份互相独立的备份，并定期重新校验哈希；单一硬盘或云盘不能作为唯一副本。</p>
+          </article>
+        </div>
+        <p class="about-foot">
+          离线包不会主动联网，也不包含 API Key、会话令牌或上传签名链接。若在 file:// 下遇到音视频无法播放，可使用任意本地静态文件服务器打开本目录（仍然不需要联网），或换用 Chrome / Edge。
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-foot">
+      <span id="foot-left">OURVERSE · 把故事留在星光里</span>
+      <span id="foot-right">OFFLINE MUSEUM · FORMAT VERSION 1</span>
+    </footer>
+  </div>
+
+  <div class="overlay" id="detail-overlay" hidden>
+    <div class="sheet" id="detail-sheet" role="dialog" aria-modal="true" aria-labelledby="detail-title" tabindex="-1">
+      <div class="sheet-top">
+        <p class="sheet-kicker">MEMORY · 记忆详情</p>
+        <button type="button" class="icon-btn" id="detail-close" aria-label="关闭记忆详情">✕</button>
+      </div>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="照片查看器" hidden>
+    <button type="button" class="icon-btn lightbox-close" id="lb-close" aria-label="关闭图片">✕</button>
+    <button type="button" class="icon-btn lb-nav lb-prev" id="lb-prev" aria-label="上一张图片">‹</button>
+    <figure class="lb-figure">
+      <img id="lb-img" alt="">
+      <p class="lb-error" id="lb-error" hidden>这张图片无法读取，原文件仍保存在 assets 目录中。</p>
+      <figcaption id="lb-caption"></figcaption>
+    </figure>
+    <button type="button" class="icon-btn lb-nav lb-next" id="lb-next" aria-label="下一张图片">›</button>
+    <span class="lb-count" id="lb-count" aria-live="polite"></span>
+  </div>
+
+  <script type="application/json" id="museum-data">/*__MUSEUM_DATA__*/null</script>
+  <script>
+    (function () {
+      'use strict';
+
+      var data = null;
+      try {
+        var dataElement = document.getElementById('museum-data');
+        data = JSON.parse((dataElement && dataElement.textContent) || 'null');
+      } catch (error) {
+        data = null;
+      }
+
+      if (!data || !Array.isArray(data.memories)) {
+        var mainElement = document.getElementById('museum-main');
+        if (mainElement) {
+          var fatal = document.createElement('p');
+          fatal.className = 'fatal';
+          fatal.textContent = '离线数据缺失或损坏。请重新解压完整目录，并再次打开 index.html。';
+          mainElement.insertBefore(fatal, mainElement.firstChild);
+        }
+        return;
+      }
+
+      var WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      var SCOPE_LABELS = {
+        mine: '只导出自我的记录',
+        shared: '只导出共同记录',
+        all: '导出我能访问的全部'
+      };
+      var state = { query: '', filter: 'all' };
+      var memories = data.memories.slice().sort(function (a, b) {
+        var left = String(a.occurredAt || a.occurredOn || '');
+        var right = String(b.occurredAt || b.occurredOn || '');
+        if (left === right) return 0;
+        return left < right ? 1 : -1;
+      });
+      var memoryById = {};
+      memories.forEach(function (memory) {
+        memoryById[memory.id] = memory;
+      });
+      var photoRegistry = [];
+      var photoIndexByPath = {};
+
+      function byId(id) {
+        return document.getElementById(id);
+      }
+
+      function el(tag, className, text) {
+        var node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined && text !== null) node.textContent = String(text);
+        return node;
+      }
+
+      function clear(node) {
+        while (node && node.firstChild) node.removeChild(node.firstChild);
+      }
+
+      function setText(id, text) {
+        var node = byId(id);
+        if (node) node.textContent = text;
+      }
+
+      function pad(value) {
+        return value < 10 ? '0' + value : String(value);
+      }
+
+      function dateParts(value) {
+        var match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ''));
+        if (!match) return null;
+        return { y: Number(match[1]), m: Number(match[2]), d: Number(match[3]) };
+      }
+
+      function dayLabel(value) {
+        var parts = dateParts(value);
+        return parts ? parts.m + ' 月 ' + parts.d + ' 日' : '未标注日期';
+      }
+
+      function monthLabel(value) {
+        var parts = dateParts(value);
+        return parts ? parts.y + ' 年 ' + parts.m + ' 月' : '未标注日期';
+      }
+
+      function weekdayLabel(value) {
+        var parts = dateParts(value);
+        if (!parts) return '';
+        var date = new Date(parts.y, parts.m - 1, parts.d);
+        return WEEKDAYS[date.getDay()] || '';
+      }
+
+      function timeLabel(memory) {
+        var value = memory && memory.occurredTime ? String(memory.occurredTime) : '';
+        return value ? value.slice(0, 5) : '';
+      }
+
+      function generatedLabel(value) {
+        var date = new Date(value);
+        if (isNaN(date.getTime())) return '离线导出';
+        return '生成于 ' + date.getFullYear() + ' 年 ' + (date.getMonth() + 1) + ' 月 ' + date.getDate() + ' 日 ' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+      }
+
+      function formatBytes(bytes) {
+        var value = Number(bytes);
+        if (!isFinite(value) || value < 0) return '—';
+        if (value < 1024) return value + ' B';
+        if (value < 1024 * 1024) return (value / 1024).toFixed(1) + ' KB';
+        if (value < 1024 * 1024 * 1024) return (value / (1024 * 1024)).toFixed(1) + ' MB';
+        return (value / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+      }
+
+      function attachmentsOf(memory, kind) {
+        var list = memory && Array.isArray(memory.attachments) ? memory.attachments : [];
+        return list.filter(function (attachment) {
+          return attachment && attachment.kind === kind;
+        });
+      }
+
+      function allAttachments(memory) {
+        return memory && Array.isArray(memory.attachments) ? memory.attachments.filter(Boolean) : [];
+      }
+
+      function countKind(kind) {
+        var total = 0;
+        memories.forEach(function (memory) {
+          total += attachmentsOf(memory, kind).length;
+        });
+        return total;
+      }
+
+      function visibilityBadge(visibility) {
+        return el(
+          'span',
+          'vis-badge ' + (visibility === 'private' ? 'is-private' : 'is-shared'),
+          visibility === 'private' ? '仅自己可见' : '共同可见'
+        );
+      }
+
+      function plainText(markdown) {
+        return String(markdown || '')
+          .replace(/```[\s\S]*?```/g, ' ')
+          .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+          .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+          .replace(/^#{1,6}\s+/gm, '')
+          .replace(/[*_~`>#-]+/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      function placeholder(kind, label) {
+        var glyphs = { image: '▣', audio: '◍', video: '▶', text: '✎' };
+        var wrap = el('div', 'media-placeholder');
+        wrap.appendChild(el('span', 'placeholder-glyph', glyphs[kind] || '✦'));
+        wrap.appendChild(el('span', 'placeholder-label', label || '媒体文件'));
+        return wrap;
+      }
+
+      function downloadLink(attachment, label) {
+        var link = el('a', 'download-link', label || '下载原文件');
+        link.href = attachment.path;
+        if (attachment.fileName) link.download = attachment.fileName;
+        return link;
+      }
+
+      function bindImageFallback(image, host, label) {
+        image.addEventListener('error', function () {
+          host.classList.add('is-missing');
+          clear(host);
+          host.appendChild(placeholder('image', label || '图片无法读取'));
+        });
+      }
+
+      /* ── Markdown: escape first, then a tiny safe renderer ──────── */
+      function escapeHtmlText(value) {
+        return String(value === undefined || value === null ? '' : value)
+          .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function inlineMarkdown(text) {
+        var codes = [];
+        var links = [];
+        var output = text.replace(/`([^`\n]+)`/g, function (match, code) {
+          codes.push(code);
+          return '\u0001C' + (codes.length - 1) + '\u0001';
+        });
+
+        output = output.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function (match, label, url) {
+          if (!/^https?:\/\//i.test(url)) return match;
+          links.push('<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + label + '</a>');
+          return '\u0001L' + (links.length - 1) + '\u0001';
+        });
+
+        output = output.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        output = output.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+        output = output.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+        output = output.replace(/(^|[^_])_([^_\n]+)_/g, '$1<em>$2</em>');
+
+        output = output.replace(/\u0001C(\d+)\u0001/g, function (match, index) {
+          return '<code>' + codes[Number(index)] + '</code>';
+        });
+        output = output.replace(/\u0001L(\d+)\u0001/g, function (match, index) {
+          return links[Number(index)];
+        });
+        return output;
+      }
+
+      function isBlockStart(line) {
+        if (!line.trim()) return true;
+        return /^```/.test(line.trim()) ||
+          /^#{1,4}\s+/.test(line) ||
+          /^\s*(?:---+|\*\*\*+|___+)\s*$/.test(line) ||
+          /^&gt;\s?/.test(line) ||
+          /^\s*[-*]\s+/.test(line) ||
+          /^\s*\d+\.\s+/.test(line);
+      }
+
+      function renderMarkdown(source) {
+        var escaped = escapeHtmlText(String(source || '').replace(/\r\n?/g, '\n'));
+        var lines = escaped.split('\n');
+        var html = [];
+        var index = 0;
+
+        while (index < lines.length) {
+          var line = lines[index];
+          if (!line.trim()) {
+            index += 1;
+            continue;
+          }
+
+          if (/^```/.test(line.trim())) {
+            index += 1;
+            var codeLines = [];
+            while (index < lines.length && !/^```/.test(lines[index].trim())) {
+              codeLines.push(lines[index]);
+              index += 1;
+            }
+            if (index < lines.length) index += 1;
+            html.push('<pre><code>' + codeLines.join('\n') + '</code></pre>');
+            continue;
+          }
+
+          var heading = /^(#{1,4})\s+(.+)$/.exec(line);
+          if (heading) {
+            var level = heading[1].length;
+            html.push('<h' + level + '>' + inlineMarkdown(heading[2]) + '</h' + level + '>');
+            index += 1;
+            continue;
+          }
+
+          if (/^\s*(?:---+|\*\*\*+|___+)\s*$/.test(line)) {
+            html.push('<hr>');
+            index += 1;
+            continue;
+          }
+
+          if (/^&gt;\s?/.test(line)) {
+            var quoteLines = [];
+            while (index < lines.length && /^&gt;\s?/.test(lines[index])) {
+              quoteLines.push(lines[index].replace(/^&gt;\s?/, ''));
+              index += 1;
+            }
+            html.push('<blockquote>' + inlineMarkdown(quoteLines.join('\n')).replace(/\n/g, '<br>') + '</blockquote>');
+            continue;
+          }
+
+          if (/^\s*[-*]\s+/.test(line)) {
+            var unordered = [];
+            while (index < lines.length && /^\s*[-*]\s+/.test(lines[index])) {
+              unordered.push(lines[index].replace(/^\s*[-*]\s+/, ''));
+              index += 1;
+            }
+            html.push('<ul>' + unordered.map(function (item) {
+              return '<li>' + inlineMarkdown(item) + '</li>';
+            }).join('') + '</ul>');
+            continue;
+          }
+
+          if (/^\s*\d+\.\s+/.test(line)) {
+            var ordered = [];
+            while (index < lines.length && /^\s*\d+\.\s+/.test(lines[index])) {
+              ordered.push(lines[index].replace(/^\s*\d+\.\s+/, ''));
+              index += 1;
+            }
+            html.push('<ol>' + ordered.map(function (item) {
+              return '<li>' + inlineMarkdown(item) + '</li>';
+            }).join('') + '</ol>');
+            continue;
+          }
+
+          var paragraph = [];
+          while (index < lines.length && lines[index].trim() && !isBlockStart(lines[index])) {
+            paragraph.push(lines[index]);
+            index += 1;
+          }
+          html.push('<p>' + inlineMarkdown(paragraph.join('\n')).replace(/\n/g, '<br>') + '</p>');
+        }
+
+        return html.join('\n');
+      }
+
+      /* ── Cover ──────────────────────────────────────────────────── */
+      function renderCover() {
+        setText('space-name', data.space && data.space.name ? data.space.name : 'OURVERSE');
+        setText('space-motto', data.space && data.space.motto ? data.space.motto : '把故事留在星光里。');
+        setText('generated-at', generatedLabel(data.generatedAt));
+        if (!byId('scope-label').textContent.trim()) {
+          setText('scope-label', SCOPE_LABELS[data.scope] || '离线导出');
+        }
+        if (data.viewerName) setText('viewer-name', '由「' + data.viewerName + '」导出');
+
+        var members = Array.isArray(data.members) ? data.members.filter(Boolean) : [];
+        setText('members', members.length ? members.join(' · ') : '一段只属于两个人的记忆');
+
+        var badgeHost = byId('demo-badge');
+        if (badgeHost) {
+          if (data.demo && !badgeHost.querySelector('.badge-demo')) {
+            badgeHost.appendChild(el('span', 'badge badge-demo', 'DEMO · 虚构演示数据'));
+          } else if (!data.demo) {
+            clear(badgeHost);
+          }
+        }
+
+        var stats = [
+          { label: '记忆', value: memories.length },
+          { label: '照片', value: countKind('image') },
+          { label: '声音', value: countKind('audio') },
+          { label: '影像', value: countKind('video') },
+          { label: '纪念日', value: Array.isArray(data.anniversaries) ? data.anniversaries.length : 0 }
+        ];
+        var statsHost = byId('stats');
+        clear(statsHost);
+        stats.forEach(function (stat) {
+          var wrapper = el('div', 'stat');
+          wrapper.appendChild(el('dt', null, stat.label));
+          wrapper.appendChild(el('dd', null, stat.value));
+          statsHost.appendChild(wrapper);
+        });
+
+        setText('cover-note', '共 ' + memories.length + ' 条记忆 · ' + countKind('image') + ' 张照片 · ' + countKind('audio') + ' 段声音 · ' + countKind('video') + ' 段影像。完全离线，双击即可浏览。');
+
+        var photoCount = countKind('image');
+        var audioCount = countKind('audio');
+        var videoCount = countKind('video');
+        setText('foot-left', 'OURVERSE · ' + (data.space && data.space.name ? data.space.name : '私人数字博物馆'));
+        setText('foot-right', 'OFFLINE MUSEUM · ' + memories.length + ' MEMORIES · ' + formatBytes(data.counts && data.counts.bytes));
+        setText('timeline-note', '共 ' + memories.length + ' 条记忆，按月归档；原始媒体 ' + (photoCount + audioCount + videoCount) + ' 件。');
+      }
+
+      /* ── Timeline ───────────────────────────────────────────────── */
+      function matchesFilter(memory) {
+        var query = state.query.trim().toLowerCase();
+        if (query) {
+          var haystack = [
+            memory.title || '',
+            memory.bodyMd || '',
+            memory.locationLabel || '',
+            memory.authorName || '',
+            (Array.isArray(memory.tags) ? memory.tags : []).join(' '),
+            memory.visibility === 'private' ? '私密' : '共同'
+          ].join('\n').toLowerCase();
+          if (haystack.indexOf(query) === -1) return false;
+        }
+        switch (state.filter) {
+          case 'photos':
+            return attachmentsOf(memory, 'image').length > 0;
+          case 'audio':
+            return attachmentsOf(memory, 'audio').length > 0;
+          case 'video':
+            return attachmentsOf(memory, 'video').length > 0;
+          case 'text':
+            return allAttachments(memory).length === 0;
+          case 'shared':
+            return memory.visibility === 'shared';
+          case 'private':
+            return memory.visibility === 'private';
+          default:
+            return true;
+        }
+      }
+
+      function groupByMonth(list) {
+        var order = [];
+        var groups = Object.create(null);
+        list.forEach(function (memory) {
+          var key = memory.occurredOn ? String(memory.occurredOn).slice(0, 7) : 'unknown';
+          if (!groups[key]) {
+            groups[key] = { key: key, label: monthLabel(memory.occurredOn), items: [] };
+            order.push(key);
+          }
+          groups[key].items.push(memory);
+        });
+        order.sort(function (a, b) {
+          if (a === 'unknown') return 1;
+          if (b === 'unknown') return -1;
+          return a < b ? 1 : -1;
+        });
+        return order.map(function (key) {
+          return groups[key];
+        });
+      }
+
+      function memoryCard(memory) {
+        var card = el('article', 'memory-card');
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', '查看记忆：' + (memory.title || '未命名'));
+
+        var media = el('div', 'card-media');
+        var cover = attachmentsOf(memory, 'image')[0];
+        if (cover) {
+          var image = document.createElement('img');
+          image.src = cover.path;
+          image.alt = '';
+          image.loading = 'lazy';
+          image.decoding = 'async';
+          bindImageFallback(image, media, '图片无法读取');
+          media.appendChild(image);
+        } else {
+          media.classList.add('card-media-empty');
+          if (attachmentsOf(memory, 'audio').length) {
+            media.appendChild(placeholder('audio', '声音记忆'));
+          } else if (attachmentsOf(memory, 'video').length) {
+            media.appendChild(placeholder('video', '影像记忆'));
+          } else {
+            media.appendChild(placeholder('text', '文字记忆'));
+          }
+        }
+        var mediaTotal = allAttachments(memory).length;
+        if (mediaTotal > 0) media.appendChild(el('span', 'media-count', mediaTotal + ' 件媒体'));
+        card.appendChild(media);
+
+        var body = el('div', 'card-body');
+        var top = el('div', 'card-top');
+        top.appendChild(el('span', 'card-date', dayLabel(memory.occurredOn) + (timeLabel(memory) ? ' · ' + timeLabel(memory) : '')));
+        top.appendChild(visibilityBadge(memory.visibility));
+        body.appendChild(top);
+
+        body.appendChild(el('h3', 'card-title', memory.title || '未命名记忆'));
+
+        var excerpt = plainText(memory.bodyMd || '').slice(0, 128);
+        if (excerpt) body.appendChild(el('p', 'card-excerpt', excerpt));
+
+        var foot = el('div', 'card-foot');
+        var tags = Array.isArray(memory.tags) ? memory.tags : [];
+        var tagList = el('div', 'tag-list');
+        tags.slice(0, 3).forEach(function (tag) {
+          tagList.appendChild(el('span', 'tag', tag));
+        });
+        if (tags.length > 3) tagList.appendChild(el('span', 'tag tag-more', '+' + (tags.length - 3)));
+        foot.appendChild(tagList);
+        foot.appendChild(el('span', 'card-author', memory.authorName || ''));
+        body.appendChild(foot);
+        card.appendChild(body);
+
+        card.addEventListener('click', function () {
+          openDetail(memory.id);
+        });
+        card.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+            event.preventDefault();
+            openDetail(memory.id);
+          }
+        });
+        return card;
+      }
+
+      function renderTimeline() {
+        var list = memories.filter(matchesFilter);
+        var timeline = byId('timeline');
+        var empty = byId('timeline-empty');
+        clear(timeline);
+
+        if (list.length === 0) {
+          empty.hidden = false;
+        } else {
+          empty.hidden = true;
+          groupByMonth(list).forEach(function (group) {
+            var section = el('section', 'month');
+            var head = el('header', 'month-head');
+            head.appendChild(el('h3', 'month-title', group.label));
+            head.appendChild(el('span', 'month-count', group.items.length + ' 条'));
+            section.appendChild(head);
+
+            var grid = el('div', 'month-grid');
+            group.items.forEach(function (memory) {
+              grid.appendChild(memoryCard(memory));
+            });
+            section.appendChild(grid);
+            timeline.appendChild(section);
+          });
+        }
+
+        var result = '显示 ' + list.length + ' / ' + memories.length + ' 条记忆';
+        if (state.query.trim()) result += ' · 搜索「' + state.query.trim() + '」';
+        setText('result-line', result);
+      }
+
+      function updateChips() {
+        var buttons = document.querySelectorAll('#chips [data-filter]');
+        for (var index = 0; index < buttons.length; index += 1) {
+          var button = buttons[index];
+          var active = button.getAttribute('data-filter') === state.filter;
+          button.classList.toggle('is-active', active);
+          button.setAttribute('aria-pressed', active ? 'true' : 'false');
+        }
+      }
+
+      function setFilter(filter) {
+        state.filter = filter;
+        updateChips();
+        renderTimeline();
+      }
+
+      /* ── Galleries ──────────────────────────────────────────────── */
+      function renderPhotoGallery() {
+        var grid = byId('photo-grid');
+        clear(grid);
+        photoRegistry = [];
+        photoIndexByPath = {};
+        memories.forEach(function (memory) {
+          attachmentsOf(memory, 'image').forEach(function (attachment) {
+            if (photoIndexByPath[attachment.path] === undefined) {
+              photoIndexByPath[attachment.path] = photoRegistry.length;
+              photoRegistry.push({ memory: memory, attachment: attachment });
+            }
+          });
+        });
+
+        setText('photo-count', photoRegistry.length + ' 张');
+        byId('photo-empty').hidden = photoRegistry.length > 0;
+
+        photoRegistry.forEach(function (entry) {
+          var figure = document.createElement('figure');
+          var button = el('button', 'photo-tile');
+          button.type = 'button';
+          button.setAttribute('aria-label', '查看照片：' + (entry.memory.title || '未命名记忆'));
+          var image = document.createElement('img');
+          image.src = entry.attachment.path;
+          image.alt = '';
+          image.loading = 'lazy';
+          image.decoding = 'async';
+          bindImageFallback(image, button, '图片无法读取');
+          button.appendChild(image);
+          button.addEventListener('click', function () {
+            openLightbox(entry.attachment.path);
+          });
+          figure.appendChild(button);
+
+          var caption = document.createElement('figcaption');
+          caption.appendChild(el('span', 'photo-caption-title', entry.memory.title || '未命名记忆'));
+          caption.appendChild(el('span', 'photo-caption-date', dayLabel(entry.memory.occurredOn)));
+          figure.appendChild(caption);
+          grid.appendChild(figure);
+        });
+      }
+
+      function renderAudioGallery() {
+        var list = byId('audio-list');
+        clear(list);
+        var total = 0;
+        memories.forEach(function (memory) {
+          attachmentsOf(memory, 'audio').forEach(function (attachment) {
+            total += 1;
+            var item = el('div', 'audio-item');
+            var head = el('div', 'audio-head');
+            head.appendChild(el('span', 'audio-title', memory.title || '未命名记忆'));
+            head.appendChild(el('span', 'audio-date', dayLabel(memory.occurredOn)));
+            item.appendChild(head);
+
+            var audio = document.createElement('audio');
+            audio.controls = true;
+            audio.preload = 'metadata';
+            audio.src = attachment.path;
+            item.appendChild(audio);
+            audio.addEventListener('error', function () {
+              if (!item.querySelector('.media-warning')) {
+                item.appendChild(el('p', 'media-warning', '浏览器无法直接播放这段音频，可下载原文件后播放。'));
+              }
+            });
+
+            var foot = el('div', 'media-foot');
+            foot.appendChild(el('span', 'file-name', attachment.fileName || attachment.path));
+            foot.appendChild(downloadLink(attachment));
+            item.appendChild(foot);
+            list.appendChild(item);
+          });
+        });
+        setText('audio-count', total + ' 段');
+        byId('audio-empty').hidden = total > 0;
+      }
+
+      function renderVideoGallery() {
+        var grid = byId('video-grid');
+        clear(grid);
+        var total = 0;
+        memories.forEach(function (memory) {
+          attachmentsOf(memory, 'video').forEach(function (attachment) {
+            total += 1;
+            var figure = document.createElement('figure');
+            figure.className = 'video-item';
+
+            var video = document.createElement('video');
+            video.controls = true;
+            video.preload = 'metadata';
+            video.setAttribute('playsinline', '');
+            video.src = attachment.path;
+            figure.appendChild(video);
+            video.addEventListener('error', function () {
+              if (!figure.querySelector('.media-warning')) {
+                figure.appendChild(el('p', 'media-warning', '当前浏览器可能不支持这个视频编码，可下载原文件后播放。'));
+              }
+            });
+
+            var caption = el('figcaption', 'video-caption');
+            caption.appendChild(el('span', 'video-title', memory.title || '未命名记忆'));
+            caption.appendChild(el('span', 'video-date', dayLabel(memory.occurredOn)));
+            figure.appendChild(caption);
+
+            var foot = el('div', 'media-foot');
+            foot.style.padding = '0 14px 13px';
+            foot.appendChild(el('span', 'file-name', attachment.fileName || attachment.path));
+            foot.appendChild(downloadLink(attachment));
+            figure.appendChild(foot);
+            grid.appendChild(figure);
+          });
+        });
+        setText('video-count', total + ' 段');
+        byId('video-empty').hidden = total > 0;
+      }
+
+      function renderGalleries() {
+        renderPhotoGallery();
+        renderAudioGallery();
+        renderVideoGallery();
+      }
+
+      /* ── Detail ─────────────────────────────────────────────────── */
+      var lastDetailFocus = null;
+      var lastLightboxFocus = null;
+      var lightboxIndex = -1;
+
+      function metaItem(term, value) {
+        var wrapper = document.createElement('div');
+        wrapper.appendChild(el('dt', null, term));
+        wrapper.appendChild(el('dd', null, value));
+        return wrapper;
+      }
+
+      function openDetail(id) {
+        var memory = memoryById[id];
+        if (!memory) return;
+        lastDetailFocus = document.activeElement;
+
+        var content = byId('detail-content');
+        clear(content);
+
+        var header = el('header', 'detail-head');
+        header.appendChild(el('p', 'detail-kicker', dayLabel(memory.occurredOn) + ' · ' + weekdayLabel(memory.occurredOn) + (timeLabel(memory) ? ' · ' + timeLabel(memory) : '')));
+        var title = el('h2', 'detail-title', memory.title || '未命名记忆');
+        title.id = 'detail-title';
+        header.appendChild(title);
+
+        var badges = el('div', 'detail-badges');
+        badges.appendChild(visibilityBadge(memory.visibility));
+        if (memory.authorName) badges.appendChild(el('span', null, '记录者 · ' + memory.authorName));
+        header.appendChild(badges);
+        content.appendChild(header);
+
+        var meta = el('dl', 'detail-meta');
+        meta.appendChild(metaItem('发生时间', dayLabel(memory.occurredOn) + ' · ' + weekdayLabel(memory.occurredOn) + (timeLabel(memory) ? ' · ' + timeLabel(memory) : '')));
+        meta.appendChild(metaItem('可见性', memory.visibility === 'private' ? '仅记录者本人可见' : '双方共同可见'));
+        if (memory.locationLabel) meta.appendChild(metaItem('地点', memory.locationLabel));
+        if (Array.isArray(memory.tags) && memory.tags.length) meta.appendChild(metaItem('标签', memory.tags.join(' · ')));
+        meta.appendChild(metaItem('附件', allAttachments(memory).length ? allAttachments(memory).length + ' 件' : '无'));
+        content.appendChild(meta);
+
+        var prose = el('div', 'prose');
+        if (String(memory.bodyMd || '').trim()) {
+          prose.innerHTML = renderMarkdown(memory.bodyMd);
+        } else {
+          prose.appendChild(el('p', 'prose-empty', '这条记忆没有文字内容。'));
+        }
+        content.appendChild(prose);
+
+        var images = attachmentsOf(memory, 'image');
+        var audios = attachmentsOf(memory, 'audio');
+        var videos = attachmentsOf(memory, 'video');
+
+        if (images.length || audios.length || videos.length) {
+          var mediaSection = el('section', 'detail-media');
+          mediaSection.setAttribute('aria-label', '记忆附件');
+
+          if (images.length) {
+            mediaSection.appendChild(el('h3', null, '照片 · ' + images.length));
+            var imageGrid = el('div', 'detail-image-grid');
+            images.forEach(function (attachment) {
+              var button = el('button', 'detail-image-button');
+              button.type = 'button';
+              button.setAttribute('aria-label', '查看照片：' + (memory.title || '未命名记忆'));
+              var image = document.createElement('img');
+              image.src = attachment.path;
+              image.alt = '';
+              image.loading = 'lazy';
+              image.decoding = 'async';
+              bindImageFallback(image, button, '图片无法读取');
+              button.appendChild(image);
+              button.addEventListener('click', function () {
+                openLightbox(attachment.path);
+              });
+              imageGrid.appendChild(button);
+            });
+            mediaSection.appendChild(imageGrid);
+            var imageDownloads = el('div', 'media-foot');
+            imageDownloads.style.marginTop = '10px';
+            images.forEach(function (attachment) {
+              imageDownloads.appendChild(downloadLink(attachment, '下载 ' + (attachment.fileName || '照片')));
+            });
+            mediaSection.appendChild(imageDownloads);
+          }
+
+          if (audios.length) {
+            mediaSection.appendChild(el('h3', null, '声音 · ' + audios.length));
+            audios.forEach(function (attachment) {
+              var item = el('div', 'detail-audio');
+              var audio = document.createElement('audio');
+              audio.controls = true;
+              audio.preload = 'metadata';
+              audio.src = attachment.path;
+              item.appendChild(audio);
+              audio.addEventListener('error', function () {
+                if (!item.querySelector('.media-warning')) {
+                  item.appendChild(el('p', 'media-warning', '浏览器无法直接播放这段音频，可下载原文件后播放。'));
+                }
+              });
+              var foot = el('div', 'media-foot');
+              foot.appendChild(el('span', 'file-name', attachment.fileName || attachment.path));
+              foot.appendChild(downloadLink(attachment));
+              item.appendChild(foot);
+              mediaSection.appendChild(item);
+            });
+          }
+
+          if (videos.length) {
+            mediaSection.appendChild(el('h3', null, '影像 · ' + videos.length));
+            videos.forEach(function (attachment) {
+              var item = el('div', 'detail-video');
+              var video = document.createElement('video');
+              video.controls = true;
+              video.preload = 'metadata';
+              video.setAttribute('playsinline', '');
+              video.src = attachment.path;
+              item.appendChild(video);
+              video.addEventListener('error', function () {
+                if (!item.querySelector('.media-warning')) {
+                  item.appendChild(el('p', 'media-warning', '当前浏览器可能不支持这个视频编码，可下载原文件后播放。'));
+                }
+              });
+              var foot = el('div', 'media-foot');
+              foot.appendChild(el('span', 'file-name', attachment.fileName || attachment.path));
+              foot.appendChild(downloadLink(attachment));
+              item.appendChild(foot);
+              mediaSection.appendChild(item);
+            });
+          }
+
+          content.appendChild(mediaSection);
+        }
+
+        var overlay = byId('detail-overlay');
+        overlay.hidden = false;
+        overlay.scrollTop = 0;
+        document.body.classList.add('is-locked');
+        byId('detail-close').focus();
+      }
+
+      function closeDetail() {
+        byId('detail-overlay').hidden = true;
+        if (byId('lightbox').hidden) document.body.classList.remove('is-locked');
+        if (lastDetailFocus && typeof lastDetailFocus.focus === 'function') lastDetailFocus.focus();
+        lastDetailFocus = null;
+      }
+
+      /* ── Lightbox ───────────────────────────────────────────────── */
+      function paintLightbox() {
+        var entry = photoRegistry[lightboxIndex];
+        if (!entry) return;
+        var image = byId('lb-img');
+        var error = byId('lb-error');
+        image.hidden = false;
+        error.hidden = true;
+        image.src = entry.attachment.path;
+        image.alt = entry.memory.title || '照片';
+        setText('lb-caption', (entry.memory.title || '未命名记忆') + ' · ' + dayLabel(entry.memory.occurredOn) + ' · ' + (entry.attachment.fileName || entry.attachment.path));
+        setText('lb-count', (lightboxIndex + 1) + ' / ' + photoRegistry.length);
+      }
+
+      function openLightbox(path) {
+        if (photoIndexByPath[path] === undefined) return;
+        lastLightboxFocus = document.activeElement;
+        lightboxIndex = photoIndexByPath[path];
+        paintLightbox();
+        byId('lightbox').hidden = false;
+        document.body.classList.add('is-locked');
+        byId('lb-close').focus();
+      }
+
+      function closeLightbox() {
+        byId('lightbox').hidden = true;
+        setText('lb-count', '');
+        if (byId('detail-overlay').hidden) document.body.classList.remove('is-locked');
+        if (lastLightboxFocus && typeof lastLightboxFocus.focus === 'function') lastLightboxFocus.focus();
+        lastLightboxFocus = null;
+        lightboxIndex = -1;
+      }
+
+      function stepLightbox(delta) {
+        if (!photoRegistry.length) return;
+        lightboxIndex = (lightboxIndex + delta + photoRegistry.length) % photoRegistry.length;
+        paintLightbox();
+      }
+
+      /* ── Wiring ─────────────────────────────────────────────────── */
+      function trapFocus(event) {
+        if (event.key !== 'Tab') return;
+        var container = null;
+        if (!byId('lightbox').hidden) container = byId('lightbox');
+        else if (!byId('detail-overlay').hidden) container = byId('detail-sheet');
+        if (!container) return;
+        var focusable = container.querySelectorAll('button, a[href], audio[controls], video[controls], input, [tabindex="0"]');
+        if (!focusable.length) return;
+        var first = focusable[0];
+        var last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+
+      function bindEvents() {
+        var search = byId('search');
+        search.addEventListener('input', function () {
+          state.query = search.value;
+          renderTimeline();
+        });
+
+        byId('chips').addEventListener('click', function (event) {
+          var target = event.target;
+          var button = target && target.closest ? target.closest('[data-filter]') : null;
+          if (button) setFilter(button.getAttribute('data-filter'));
+        });
+
+        byId('reset-filters').addEventListener('click', function () {
+          state.query = '';
+          state.filter = 'all';
+          search.value = '';
+          updateChips();
+          renderTimeline();
+          search.focus();
+        });
+
+        byId('detail-close').addEventListener('click', closeDetail);
+        byId('detail-overlay').addEventListener('click', function (event) {
+          if (event.target === byId('detail-overlay')) closeDetail();
+        });
+
+        byId('lb-close').addEventListener('click', closeLightbox);
+        byId('lb-prev').addEventListener('click', function () {
+          stepLightbox(-1);
+        });
+        byId('lb-next').addEventListener('click', function () {
+          stepLightbox(1);
+        });
+        byId('lightbox').addEventListener('click', function (event) {
+          if (event.target === byId('lightbox')) closeLightbox();
+        });
+        byId('lb-img').addEventListener('error', function () {
+          byId('lb-img').hidden = true;
+          byId('lb-error').hidden = false;
+        });
+
+        document.addEventListener('keydown', function (event) {
+          if (!byId('lightbox').hidden) {
+            if (event.key === 'Escape') {
+              event.preventDefault();
+              closeLightbox();
+            } else if (event.key === 'ArrowLeft') {
+              event.preventDefault();
+              stepLightbox(-1);
+            } else if (event.key === 'ArrowRight') {
+              event.preventDefault();
+              stepLightbox(1);
+            }
+            trapFocus(event);
+            return;
+          }
+          if (!byId('detail-overlay').hidden) {
+            if (event.key === 'Escape') {
+              event.preventDefault();
+              closeDetail();
+            }
+            trapFocus(event);
+          }
+        });
+      }
+
+      renderCover();
+      renderGalleries();
+      updateChips();
+      renderTimeline();
+      bindEvents();
+    })();
+  </script>
+</body>
+</html>

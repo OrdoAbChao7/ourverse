@@ -106,8 +106,8 @@ function asCapsule(record: CapsuleRecord, now: Date): Capsule {
 }
 
 interface UploadPrepared {
-  record: Omit<AttachmentRecord, 'blob'>;
-  blob: Blob;
+  record: Omit<AttachmentRecord, 'data'>;
+  data: ArrayBuffer;
 }
 
 interface ActiveContext {
@@ -350,10 +350,16 @@ export class LocalRepository implements Repository {
     const members = await db.getAllFromIndex('members', 'by-space', space.id);
     const users = await db.getAll('users');
     const profiles = new Map(users.map((entry) => [entry.id, entry]));
+    const ordered = members.slice().sort((a, b) => {
+      if (a.role !== b.role) return a.role === 'owner' ? -1 : 1;
+      if (a.joinedAt < b.joinedAt) return -1;
+      if (a.joinedAt > b.joinedAt) return 1;
+      return 0;
+    });
     return {
       user: asUserProfile(user),
       space: asSpace(space),
-      members: members.map((entry) => this.toSpaceMember(entry, profiles.get(entry.userId))),
+      members: ordered.map((entry) => this.toSpaceMember(entry, profiles.get(entry.userId))),
     };
   }
 
@@ -529,7 +535,12 @@ export class LocalRepository implements Repository {
     const users = await db.getAll('users');
     const profiles = new Map(users.map((entry) => [entry.id, entry]));
     return members
-      .sort((a, b) => (a.joinedAt < b.joinedAt ? -1 : 1))
+      .sort((a, b) => {
+        if (a.role !== b.role) return a.role === 'owner' ? -1 : 1;
+        if (a.joinedAt < b.joinedAt) return -1;
+        if (a.joinedAt > b.joinedAt) return 1;
+        return 0;
+      })
       .map((member) => this.toSpaceMember(member, profiles.get(member.userId)));
   }
 
@@ -637,7 +648,7 @@ export class LocalRepository implements Repository {
   ): MemoryWithAuthor {
     return {
       ...record,
-      attachments: attachments.map(({ blob: _blob, ...rest }) => rest),
+      attachments: attachments.map(({ data: _data, ...rest }) => rest),
       author: {
         id: record.authorId,
         displayName: author?.displayName ?? '未知作者',
@@ -712,7 +723,7 @@ export class LocalRepository implements Repository {
       }
       const attachmentId = newId('attachment');
       const sha = await sha256Hex(file);
-      const record: Omit<AttachmentRecord, 'blob'> = {
+      const record: Omit<AttachmentRecord, 'data'> = {
         id: attachmentId,
         spaceId: context.space.id,
         memoryId,
@@ -724,7 +735,7 @@ export class LocalRepository implements Repository {
         kind: meta.kind,
         createdAt: nowIso(this.clock),
       };
-      prepared.push({ record, blob: file });
+      prepared.push({ record, data: await file.arrayBuffer() });
     }
     return prepared;
   }
@@ -760,7 +771,7 @@ export class LocalRepository implements Repository {
       const tx = db.transaction(['memories', 'attachments', 'activity'], 'readwrite');
       await tx.objectStore('memories').put(record);
       for (const upload of uploads) {
-        await tx.objectStore('attachments').put({ ...upload.record, blob: upload.blob } satisfies AttachmentRecord);
+        await tx.objectStore('attachments').put({ ...upload.record, data: upload.data } satisfies AttachmentRecord);
       }
       await tx.objectStore('activity').put({
         id: newId('activity'),
@@ -819,7 +830,7 @@ export class LocalRepository implements Repository {
         if (target) await tx.objectStore('attachments').delete(attachmentId);
       }
       for (const upload of uploads) {
-        await tx.objectStore('attachments').put({ ...upload.record, blob: upload.blob } satisfies AttachmentRecord);
+        await tx.objectStore('attachments').put({ ...upload.record, data: upload.data } satisfies AttachmentRecord);
       }
       await tx.objectStore('activity').put({
         id: newId('activity'),
@@ -878,7 +889,7 @@ export class LocalRepository implements Repository {
     if (cached) return cached;
     const attachment = await this.accessibleAttachment(attachmentId);
     try {
-      const url = URL.createObjectURL(attachment.blob);
+      const url = URL.createObjectURL(new Blob([attachment.data], { type: attachment.mimeType }));
       this.objectUrls.set(attachmentId, url);
       return url;
     } catch {
@@ -888,7 +899,7 @@ export class LocalRepository implements Repository {
 
   async getAttachmentBytes(attachmentId: string): Promise<Blob> {
     const attachment = await this.accessibleAttachment(attachmentId);
-    return attachment.blob;
+    return new Blob([attachment.data], { type: attachment.mimeType });
   }
 
   // ── anniversaries ────────────────────────────────────────────────────────
