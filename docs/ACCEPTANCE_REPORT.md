@@ -4,7 +4,7 @@
 工作目录：`E:\Projects\OURVERSE`
 结论：**本地版本完成，线上能力待账号 / 授权**。没有部署、没有创建云资源、没有上传私人内容、没有调用收费模型。
 
-本报告只列出实际执行过的命令与结果。关键日志与截图随仓库保留在 `artifacts/`；完整截图、离线 ZIP、本地 dump 与 Playwright 报告保留在工作区（部分由 `.gitignore` 排除），均可用本报告的命令复现。
+本报告只列出实际执行过的命令与结果。截图与关键日志随仓库保留在 `artifacts/`；离线 ZIP、本地 dump 与 Playwright HTML 报告保留在工作区（部分由 `.gitignore` 排除），均可用本报告的命令复现。
 
 ---
 
@@ -22,7 +22,7 @@
 
 证据：`artifacts/verify.log`、`artifacts/e2e.log`、`artifacts/db-reset.log`、`artifacts/pgtap.log`、`artifacts/supabase-integration.log`、`artifacts/supabase-ui-e2e.log`、`artifacts/export-verify.log`。
 
-> 说明：关键日志（`verify` / `e2e` / `pgtap` / `supabase-integration` / `supabase-ui-e2e` / `export-verify` / `db-reset`）与关键截图已随仓库保留；完整截图集、离线 ZIP、本地数据库 dump 与 Playwright HTML 报告保留在工作区，可由本报告的命令重新生成。
+> 说明：关键日志与完整截图集已随仓库保留；离线 ZIP、本地数据库 dump 与 Playwright HTML 报告保留在工作区，可由本报告的命令重新生成。
 
 ---
 
