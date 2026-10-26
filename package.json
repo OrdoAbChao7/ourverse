@@ -1,0 +1,66 @@
+{
+  "name": "ourverse",
+  "private": true,
+  "version": "0.1.0",
+  "description": "OURVERSE — a private two-person digital memory world",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "vite",
+    "dev:host": "vite --host",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --pretty false",
+    "lint": "eslint . --max-warnings=0",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:install": "playwright install chromium",
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run build",
+    "verify:full": "npm run verify && npm run test:e2e",
+    "export:verify": "node scripts/verify-export.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.50.0",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "fflate": "^0.8.2",
+    "idb": "^8.0.3",
+    "motion": "^12.23.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.3",
+    "tailwind-merge": "^3.3.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.31.0",
+    "@playwright/test": "^1.54.0",
+    "@tailwindcss/vite": "^4.1.11",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.0.10",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "eslint": "^9.31.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "fake-indexeddb": "^6.2.6",
+    "globals": "^16.3.0",
+    "jsdom": "^26.1.0",
+    "lamejs": "^1.2.1",
+    "tailwindcss": "^4.1.11",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.37.0",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.4"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true
+  }
+}

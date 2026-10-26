@@ -1,0 +1,32 @@
+node_modules/
+dist/
+dist-ssr/
+coverage/
+*.local
+
+# build / test output
+artifacts/test-results/
+artifacts/playwright-report/
+artifacts/lighthouse/
+playwright-report/
+test-results/
+export-tmp/
+
+# env & secrets — never commit real credentials
+.env
+.env.*
+!.env.example
+!.env.test
+
+# editor / os
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+
+# supabase local
+supabase/.temp/
+supabase/.branches/
